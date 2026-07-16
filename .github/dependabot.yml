@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # Keep GitHub Actions pinned versions current. This is stack-agnostic and
+  # safe to run from day one. Add a package-ecosystem block (npm, pip, cargo,
+  # etc.) once the project's language and dependency manager are chosen.
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
