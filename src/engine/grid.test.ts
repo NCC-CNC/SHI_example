@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { cellAt, createGrid, gridFromRows, sameDimensions } from './grid.ts';
+import {
+  applyCellEdits,
+  cellAt,
+  createGrid,
+  gridFromRows,
+  sameDimensions,
+} from './grid.ts';
 
 describe('createGrid', () => {
   it('creates a grid of the right size filled with one type', () => {
@@ -50,6 +56,35 @@ describe('cellAt', () => {
   it('throws out of bounds', () => {
     expect(() => cellAt(g, 2, 0)).toThrow();
     expect(() => cellAt(g, 0, -1)).toThrow();
+  });
+});
+
+describe('applyCellEdits', () => {
+  const base = gridFromRows([
+    ['forest', 'grassland'],
+    ['wetland', 'lake'],
+  ]);
+
+  it('returns the same grid instance when there are no edits', () => {
+    expect(applyCellEdits(base, new Map())).toBe(base);
+  });
+
+  it('overlays edits by flat index without mutating the input', () => {
+    const edited = applyCellEdits(
+      base,
+      new Map([
+        [1, 'forest'],
+        [2, 'developed'],
+      ]),
+    );
+    expect(edited.cells).toEqual(['forest', 'forest', 'developed', 'lake']);
+    // Original grid is untouched.
+    expect(base.cells).toEqual(['forest', 'grassland', 'wetland', 'lake']);
+  });
+
+  it('throws on an out-of-bounds index', () => {
+    expect(() => applyCellEdits(base, new Map([[4, 'forest']]))).toThrow();
+    expect(() => applyCellEdits(base, new Map([[-1, 'forest']]))).toThrow();
   });
 });
 

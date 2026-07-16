@@ -85,6 +85,82 @@ body {
   border-radius: 6px;
 }
 
+/* Edit panel */
+.edit-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.edit-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.brush-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.brush {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.55rem;
+  font-size: 0.82rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.brush:hover {
+  border-color: var(--muted);
+}
+
+.brush-selected {
+  border-color: #1b7837;
+  box-shadow: 0 0 0 1px #1b7837;
+  font-weight: 600;
+}
+
+.edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.edit-status {
+  font-size: 0.82rem;
+  color: var(--muted);
+  max-width: 40rem;
+}
+
+.edit-reset {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.82rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.edit-reset:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 /* Maps */
 .maps {
   display: flex;
@@ -108,6 +184,25 @@ body {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
+}
+
+.grid-view-editable {
+  cursor: crosshair;
+}
+
+.grid-cell-editable {
+  cursor: crosshair;
+}
+
+.grid-cell-editable:hover {
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.grid-cell-editable:focus-visible {
+  outline: none;
+  stroke: #1b7837;
+  stroke-width: 2.5;
 }
 
 /* Legends */
@@ -335,4 +430,92 @@ body {
   font-size: 1.4rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+}
+
+/* Restoration comparison */
+.restoration {
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.restoration-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.restoration-heading h2 {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.restoration-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.compare-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.25rem 0;
+}
+
+.compare-overall .compare-row {
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.4rem;
+  border-bottom: 1px dashed var(--border);
+}
+
+.compare-overall .compare-label {
+  font-weight: 600;
+}
+
+.compare-values {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.compare-before {
+  color: var(--muted);
+}
+
+.compare-arrow {
+  color: var(--muted);
+}
+
+.compare-after {
+  font-weight: 600;
+  min-width: 3rem;
+  text-align: right;
+}
+
+.delta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  min-width: 3.5rem;
+  text-align: right;
+}
+
+.delta-up {
+  color: #1b7837;
+}
+
+.delta-down {
+  color: #c0392b;
+}
+
+.delta-flat {
+  color: var(--muted);
 }

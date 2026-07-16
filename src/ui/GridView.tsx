@@ -7,21 +7,32 @@ interface GridViewProps {
   /** Native hover tooltip text for a cell (identity, not color-alone). */
   readonly labelOf: (index: number) => string;
   readonly cellSize?: number;
+  /** When set, cells become clickable (paint tool); called with the flat index. */
+  readonly onCellClick?: ((index: number) => void) | undefined;
 }
 
 /**
  * Renders a land cover / suitability grid as SVG cells. A 2px surface gap
  * between cells keeps adjacent fills legible. Each cell carries a <title> so
- * hovering names it, so identity never depends on color alone.
+ * hovering names it, so identity never depends on color alone. When
+ * `onCellClick` is provided the grid is an editable surface: cells respond to
+ * click and to keyboard (Enter/Space) for accessibility.
  */
-export function GridView({ grid, colorOf, labelOf, cellSize = 30 }: GridViewProps) {
+export function GridView({
+  grid,
+  colorOf,
+  labelOf,
+  cellSize = 30,
+  onCellClick,
+}: GridViewProps) {
   const width = grid.width * cellSize;
   const height = grid.height * cellSize;
   const gap = 2;
+  const editable = onCellClick !== undefined;
 
   return (
     <svg
-      className="grid-view"
+      className={editable ? 'grid-view grid-view-editable' : 'grid-view'}
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
@@ -39,6 +50,19 @@ export function GridView({ grid, colorOf, labelOf, cellSize = 30 }: GridViewProp
             height={cellSize - gap}
             rx={2}
             fill={colorOf(index)}
+            className={editable ? 'grid-cell-editable' : undefined}
+            tabIndex={editable ? 0 : undefined}
+            onClick={editable ? () => onCellClick(index) : undefined}
+            onKeyDown={
+              editable
+                ? (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onCellClick(index);
+                    }
+                  }
+                : undefined
+            }
           >
             <title>{labelOf(index)}</title>
           </rect>

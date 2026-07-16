@@ -4,57 +4,87 @@ import {
   YEAR_MAX,
   YEAR_MIN,
   aggregateShi,
+  applyCellEdits,
   speciesHabitatScore,
   suitabilityField,
 } from '../engine/index.ts';
+import type { Grid, LandCoverType, Species } from '../engine/index.ts';
 import { SPECIES } from '../data/species.ts';
 import { LAND_COVER_INFO } from '../data/land-cover.ts';
 import { landCoverForYear } from '../data/scenario.ts';
 import { Controls } from './Controls.tsx';
+import { EditPanel } from './EditPanel.tsx';
 import { GridView } from './GridView.tsx';
 import { LandCoverLegend, SuitabilityLegend } from './Legend.tsx';
 import { ShiSummary } from './ShiSummary.tsx';
 import { SpeciesCard } from './SpeciesCard.tsx';
+import { RestorationSummary } from './RestorationSummary.tsx';
+import type { CompareRow } from './RestorationSummary.tsx';
 import { suitabilityColor } from './suitability-color.ts';
 
+interface SpeciesScored {
+  readonly species: Species;
+  readonly suitability: readonly number[];
+  readonly score: ReturnType<typeof speciesHabitatScore>;
+}
+
+/** Score every species on one grid against the baseline, plus the aggregate. */
+function scoreSpecies(
+  grid: Grid,
+  baselineGrid: Grid,
+  includeConnectivity: boolean,
+): { perSpecies: SpeciesScored[]; aggregate: ReturnType<typeof aggregateShi> } {
+  const perSpecies = SPECIES.map((species) => ({
+    species,
+    suitability: suitabilityField(species, grid),
+    score: speciesHabitatScore(species, grid, baselineGrid, { includeConnectivity }),
+  }));
+  const aggregate = aggregateShi(
+    perSpecies.map((p) => ({ group: p.species.group, shs: p.score.shs })),
+  );
+  return { perSpecies, aggregate };
+}
+
 /**
- * M3: three species over time. Land cover map, one Area-of-Habitat map per
- * species with its score, an optional combined-habitat overlap, and the
- * aggregated Species Habitat Index (overall and by group). Everything is
- * recomputed live from the pure engine.
+ * M4: three species over time, now editable. Land cover map, one Area-of-Habitat
+ * map per species with its score, an optional combined-habitat overlap, and the
+ * aggregated Species Habitat Index. Painting cells on the land cover map edits
+ * the landscape and recomputes everything live; a restoration panel shows the
+ * index before and after the edits. Everything comes from the pure engine.
  */
 export function App() {
   const [year, setYear] = useState(YEAR_MAX);
   const [baseline, setBaseline] = useState(DEFAULT_BASELINE);
   const [includeConnectivity, setIncludeConnectivity] = useState(true);
   const [showOverlap, setShowOverlap] = useState(false);
+  const [brush, setBrush] = useState<LandCoverType | null>(null);
+  const [edits, setEdits] = useState<ReadonlyMap<number, LandCoverType>>(new Map());
 
-  const currentGrid = useMemo(() => landCoverForYear(year), [year]);
+  const scenarioGrid = useMemo(() => landCoverForYear(year), [year]);
   const baselineGrid = useMemo(() => landCoverForYear(baseline), [baseline]);
-
-  const perSpecies = useMemo(
-    () =>
-      SPECIES.map((species) => ({
-        species,
-        suitability: suitabilityField(species, currentGrid),
-        score: speciesHabitatScore(species, currentGrid, baselineGrid, {
-          includeConnectivity,
-        }),
-      })),
-    [currentGrid, baselineGrid, includeConnectivity],
+  const editedGrid = useMemo(
+    () => applyCellEdits(scenarioGrid, edits),
+    [scenarioGrid, edits],
   );
 
-  const aggregate = useMemo(
+  // "After" scores drive every map and readout; they reflect the current edits.
+  const after = useMemo(
+    () => scoreSpecies(editedGrid, baselineGrid, includeConnectivity),
+    [editedGrid, baselineGrid, includeConnectivity],
+  );
+  const { perSpecies, aggregate } = after;
+
+  // "Before" (scenario, no edits) is only needed for the restoration comparison.
+  const hasEdits = edits.size > 0;
+  const before = useMemo(
     () =>
-      aggregateShi(
-        perSpecies.map((p) => ({ group: p.species.group, shs: p.score.shs })),
-      ),
-    [perSpecies],
+      hasEdits ? scoreSpecies(scenarioGrid, baselineGrid, includeConnectivity) : null,
+    [hasEdits, scenarioGrid, baselineGrid, includeConnectivity],
   );
 
   // Combined-habitat overlap: mean suitability across species per cell.
   const overlap = useMemo(() => {
-    const cellCount = currentGrid.cells.length;
+    const cellCount = editedGrid.cells.length;
     const combined = new Array<number>(cellCount).fill(0);
     for (const { suitability } of perSpecies) {
       for (let i = 0; i < cellCount; i++) {
@@ -62,7 +92,35 @@ export function App() {
       }
     }
     return combined.map((sum) => sum / perSpecies.length);
-  }, [perSpecies, currentGrid]);
+  }, [perSpecies, editedGrid]);
+
+  // Paint a cell with the current brush; painting back to the scenario type
+  // clears the edit so the edit count stays meaningful.
+  const paintCell = (index: number) => {
+    if (brush === null) {
+      return;
+    }
+    setEdits((prev) => {
+      const next = new Map(prev);
+      if (scenarioGrid.cells[index] === brush) {
+        next.delete(index);
+      } else {
+        next.set(index, brush);
+      }
+      return next;
+    });
+  };
+
+  const overallRow: CompareRow = {
+    label: 'Species Habitat Index',
+    before: before?.aggregate.overall ?? null,
+    after: aggregate.overall,
+  };
+  const speciesRows: CompareRow[] = perSpecies.map(({ species, score }, i) => ({
+    label: species.name,
+    before: before?.perSpecies[i]?.score.shs ?? null,
+    after: score.shs,
+  }));
 
   return (
     <main className="app">
@@ -70,8 +128,8 @@ export function App() {
         <h1>Species Habitat Index Explorer</h1>
         <p className="tagline">
           Three species, each tied to a different habitat. Drag the year to watch the
-          landscape change, and see how each species&apos; habitat score, and the
-          overall index, respond.
+          landscape change, paint the land cover map to test a restoration, and see how
+          each species&apos; habitat score, and the overall index, respond.
         </p>
       </header>
 
@@ -88,13 +146,27 @@ export function App() {
         onShowOverlapChange={setShowOverlap}
       />
 
+      <EditPanel
+        brush={brush}
+        editCount={edits.size}
+        onBrushChange={setBrush}
+        onReset={() => setEdits(new Map())}
+      />
+
       <div className="maps">
         <figure className="map">
-          <figcaption>Land cover ({year})</figcaption>
+          <figcaption>
+            Land cover ({year}){hasEdits ? ' · edited' : ''}
+          </figcaption>
           <GridView
-            grid={currentGrid}
-            colorOf={(i) => LAND_COVER_INFO[currentGrid.cells[i]!].color}
-            labelOf={(i) => LAND_COVER_INFO[currentGrid.cells[i]!].label}
+            grid={editedGrid}
+            colorOf={(i) => LAND_COVER_INFO[editedGrid.cells[i]!].color}
+            labelOf={(i) =>
+              `${LAND_COVER_INFO[editedGrid.cells[i]!].label}${
+                edits.has(i) ? ' (edited)' : ''
+              }`
+            }
+            onCellClick={brush === null ? undefined : paintCell}
           />
           <LandCoverLegend />
         </figure>
@@ -103,7 +175,7 @@ export function App() {
           <figure className="map">
             <figcaption>Combined habitat ({year})</figcaption>
             <GridView
-              grid={currentGrid}
+              grid={editedGrid}
               colorOf={(i) => suitabilityColor(overlap[i]!)}
               labelOf={(i) => `combined suitability (mean): ${overlap[i]!.toFixed(2)}`}
             />
@@ -126,7 +198,7 @@ export function App() {
             <SpeciesCard
               key={species.id}
               species={species}
-              grid={currentGrid}
+              grid={editedGrid}
               suitability={suitability}
               score={score}
             />
@@ -135,6 +207,15 @@ export function App() {
       </div>
 
       <ShiSummary aggregate={aggregate} year={year} baseline={baseline} />
+
+      {hasEdits && (
+        <RestorationSummary
+          overall={overallRow}
+          species={speciesRows}
+          year={year}
+          editCount={edits.size}
+        />
+      )}
     </main>
   );
 }
