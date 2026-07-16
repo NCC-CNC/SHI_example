@@ -17,3 +17,7 @@ All notable changes to this project are documented here. The format is based on
 - M0 scaffold: Vite + React + TypeScript app, Vitest with coverage gate on the
   engine, ESLint + Prettier, CI running format/lint/typecheck/test/build, and a
   GitHub Pages deploy workflow. First engine module (constants) with tests.
+- M1 SHI engine (pure, headless): suitability/AOH fields, area score, GISfrag
+  connectivity (distance-to-edge transform), Species Habitat Score with a
+  connectivity on/off toggle, and overall + per-group aggregation. Hand-checked
+  Vitest suite (38 tests).

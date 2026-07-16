@@ -25,11 +25,10 @@ See `docs/design/00_project_brief.md` for the full brief.
 
 ## Project status
 
-Early build. The harness, design docs, and ADRs are in place, and M0 is done:
-the Vite + React + TypeScript scaffold builds, tests, lints, and deploys to
-GitHub Pages, with the SHI engine started (`src/engine/constants.ts`). Next is
-M1 (the pure SHI engine) per `docs/design/03_milestones.md`. Open GitHub issues
-are the live roadmap.
+Early build. The harness, design docs, and ADRs are in place. M0 (scaffold) and
+M1 (the pure SHI engine in `src/engine/`, fully unit-tested) are done. Next is
+M2 (render one species: grid, AOH map, time slider) per
+`docs/design/03_milestones.md`. Open GitHub issues are the live roadmap.
 
 ## Scope
 
