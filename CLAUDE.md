@@ -165,6 +165,21 @@ When adding a major feature or mechanic, update the relevant design doc.
 2. Prefer built-in language and framework capabilities first.
 3. Add a short ADR in `docs/decisions/` for major dependencies or stack choices.
 
+## Command style
+
+Run shell commands as single, atomic invocations so they match the allowlist in
+`.claude/settings.json` and do not trigger extra permission prompts.
+
+1. Avoid compound commands. Command substitution `$(...)`, heredocs, pipes,
+   `for`/`while`/`if` cannot be statically matched, so they always prompt even
+   when the inner command is allowlisted.
+2. Pass long text through a file, never `$(printf ...)` or a heredoc. Write the
+   text with the file tools first, then `git commit -F <file>`,
+   `gh pr create --body-file <file>`, and `gh issue create --body-file <file>`.
+3. To wait for CI, use `gh pr checks <n> --watch` (one blocking command), not a
+   hand-rolled polling loop.
+4. Prefer many small allowlisted commands over one bundled script.
+
 ## Claude Code operating mode
 
 Act as an autonomous coding agent, but keep the owner in control of design
