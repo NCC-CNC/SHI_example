@@ -21,3 +21,7 @@ in `CLAUDE.md` and will be filled in next.
 ## Getting started
 
 Install, run, and test instructions will be added once the stack is chosen.
+
+## License
+
+Licensed under the GNU General Public License v3.0. See [LICENSE](LICENSE).
