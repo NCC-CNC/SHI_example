@@ -146,14 +146,14 @@ export function App() {
         onShowOverlapChange={setShowOverlap}
       />
 
+      <ShiSummary aggregate={aggregate} year={year} baseline={baseline} />
+
       <EditPanel
         brush={brush}
         editCount={edits.size}
         onBrushChange={setBrush}
         onReset={() => setEdits(new Map())}
       />
-
-      <ShiSummary aggregate={aggregate} year={year} baseline={baseline} />
 
       <div className="maps">
         <figure className="map">
