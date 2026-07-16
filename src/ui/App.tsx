@@ -153,6 +153,8 @@ export function App() {
         onReset={() => setEdits(new Map())}
       />
 
+      <ShiSummary aggregate={aggregate} year={year} baseline={baseline} />
+
       <div className="maps">
         <figure className="map">
           <figcaption>
@@ -205,8 +207,6 @@ export function App() {
           ))}
         </div>
       </div>
-
-      <ShiSummary aggregate={aggregate} year={year} baseline={baseline} />
 
       {hasEdits && (
         <RestorationSummary
