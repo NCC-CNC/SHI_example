@@ -19,9 +19,6 @@ jobs:
 
       # Validate the workflow files themselves. Pinned to a release binary and
       # checksummed: no third-party action in the path of a required check.
-      # This is the one stack-agnostic gate, green from day one. Language steps
-      # (install, lint, typecheck, test, build) get added below once the
-      # project's stack is chosen.
       - name: Lint workflows
         env:
           ACTIONLINT_VERSION: 1.7.7
@@ -34,6 +31,24 @@ jobs:
           ./actionlint -color
           rm -f actionlint actionlint.tar.gz
 
-      # TODO(stack): once the language is chosen, add setup + install + the
-      # project's lint / typecheck / test / build steps here so this job gates
-      # merges into main.
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test and coverage gate
+        run: npm run test:coverage
+
+      - name: Build
+        run: npm run build

@@ -11,8 +11,10 @@ published method. This is a teaching tool, not a real biodiversity indicator.
 
 ## Status
 
-Design phase. The project harness and design docs are in place; the app is not
-scaffolded yet. See the design docs for what is being built.
+Early build. The Vite + React + TypeScript scaffold is in place (milestone M0):
+it builds, tests, lints, and deploys to GitHub Pages. The SHI engine and
+interactive UI are being built next (M1 onward). See the design docs for the
+plan.
 
 ## Documentation
 
@@ -33,8 +35,18 @@ engine is pure TypeScript, unit-tested with Vitest.
 
 ## Getting started
 
-Install, run, and test instructions will be added when the app is scaffolded
-(milestone M0).
+Node version is pinned in `.nvmrc`.
+
+```bash
+npm ci             # install dependencies
+npm run dev        # start the dev server
+npm run build      # production build (into dist/)
+npm run test       # unit tests (Vitest)
+npm run lint       # ESLint
+npm run typecheck  # tsc --noEmit
+```
+
+Pushing to `main` builds and deploys the site to GitHub Pages automatically.
 
 ## License
 

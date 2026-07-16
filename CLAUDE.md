@@ -25,9 +25,11 @@ See `docs/design/00_project_brief.md` for the full brief.
 
 ## Project status
 
-Early. The project harness, design docs, and ADRs are in place; the app itself
-is not scaffolded yet. Next up is M0 (Vite + React + TypeScript scaffold) per
-`docs/design/03_milestones.md`. Open GitHub issues are the live roadmap.
+Early build. The harness, design docs, and ADRs are in place, and M0 is done:
+the Vite + React + TypeScript scaffold builds, tests, lints, and deploys to
+GitHub Pages, with the SHI engine started (`src/engine/constants.ts`). Next is
+M1 (the pure SHI engine) per `docs/design/03_milestones.md`. Open GitHub issues
+are the live roadmap.
 
 ## Scope
 
