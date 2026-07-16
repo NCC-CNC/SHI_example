@@ -42,7 +42,8 @@ Done when: a user can scrub time and watch one species' AOH and scores change.
 
 - Add the wetland and grassland species and their scenario beats.
 - Multi-species view: per-species AOH, per-species SHS.
-- Species overlap / richness map.
+- Toggleable species overlap / richness layer (off by default; not a permanent
+  side panel).
 - Group SHIs and overall SHI, shown as the mean of the parts.
 - Connectivity on/off toggle in the UI.
 

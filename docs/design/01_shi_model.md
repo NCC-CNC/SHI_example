@@ -147,9 +147,9 @@ the affected year(s). The whole pipeline is recomputed from the edited grid.
   SHI before vs after, per species and overall. Mechanically identical to a
   pixel edit plus a before/after snapshot.
 
-Open question for later: whether an edit applies to a single year or propagates
-forward through the time series. Default plan: edits apply to the single viewed
-year (and restoration to 2025), with propagation as a later option.
+**Edits apply to the single viewed year** (and restoration to 2025); they do not
+propagate forward through the time series. Forward propagation is a possible
+later option (see milestones backlog), not part of the current model.
 
 ## Simplifications versus the published SHI
 

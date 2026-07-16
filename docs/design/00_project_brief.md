@@ -34,8 +34,8 @@ restoration scenario, and every downstream number and map updates.
 5. Per-species habitat score (Area + Connectivity), aggregated into an SHI, with
    a user-selectable baseline year (default 2001).
 6. A time slider (1993 to 2025) that recomputes everything per year.
-7. Visuals: land cover map, per-species AOH maps, a species-overlap/richness
-   map, and the SHI (overall and by group) with its sub-scores.
+7. Visuals: land cover map, per-species AOH maps, a toggleable species-overlap/
+   richness layer, and the SHI (overall and by group) with its sub-scores.
 8. A pixel edit tool (change a pixel's land cover type) that updates the index
    live.
 9. A restoration mode: edit land cover in the current year and compare the SHI
@@ -50,8 +50,10 @@ restoration scenario, and every downstream number and map updates.
   for now).
 - A backend or database. The app is fully client-side and deploys as a static
   site.
-- Real species identities with authoritative preference data. Example species
-  are illustrative archetypes.
+- Authoritative species preference data. The example species are real Canadian
+  species (American Marten, American Bittern, Bobolink), but their suitability
+  values are illustrative and tuned for teaching, not sourced from habitat
+  databases.
 
 ## Design principles
 

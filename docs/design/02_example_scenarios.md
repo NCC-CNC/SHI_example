@@ -24,49 +24,63 @@ is built.
 
 ## Example species and suitability crosswalks
 
-Suitability is 0..1 per land cover type. These archetypes are deliberately
-distinct so their AOH maps look different and their scores move in different
-directions under the same land cover change.
+Real Canadian species, one per group, chosen so their AOH maps look different
+and their scores move in different directions under the same land cover change.
+The suitability values (0..1 per land cover type) are illustrative and tuned for
+teaching, not authoritative habitat data; adjust freely while building.
 
-### Forest species (group: forest) - "Woodland Thrush" (illustrative)
+### Forest species (group: forest) - American Marten (*Martes americana*)
+
+A boreal/mixedwood forest specialist that needs large, contiguous mature forest
+and is sensitive to fragmentation. This makes it the clearest species for the
+connectivity lesson: cutting a corridor through forest hurts its connectivity
+score more than its area score.
 
 | land cover | suitability |
 |------------|-------------|
 | forest     | 1.0         |
-| shrubs     | 0.5         |
+| shrubs     | 0.4         |
 | wetland    | 0.2         |
 | river      | 0.1         |
-| grassland  | 0.1         |
-| crops      | 0.05        |
+| grassland  | 0.05        |
+| crops      | 0.0         |
 | lake       | 0.0         |
 | developed  | 0.0         |
 | barren     | 0.0         |
 
-### Wetland species (group: wetland) - "Marsh Heron" (illustrative)
+### Wetland species (group: wetland) - American Bittern (*Botaurus lentiginosus*)
+
+A secretive marsh bird tied to emergent wetland vegetation. Draining or
+converting wetland collapses its habitat quickly.
 
 | land cover | suitability |
 |------------|-------------|
 | wetland    | 1.0         |
-| river      | 0.7         |
-| lake       | 0.6         |
+| river      | 0.6         |
+| lake       | 0.5         |
 | shrubs     | 0.3         |
 | grassland  | 0.2         |
-| forest     | 0.2         |
+| forest     | 0.15        |
 | crops      | 0.1         |
 | developed  | 0.0         |
 | barren     | 0.0         |
 
-### Grassland species (group: grassland) - "Prairie Lark" (illustrative)
+### Grassland species (group: grassland) - Bobolink (*Dolichonyx oryzivorus*)
+
+A grassland songbird (a Canadian species at risk) that breeds in native
+grassland but also uses hayfields and pasture. Its partial use of crops means
+grassland-to-crop conversion is a gentler decline than an outright loss, which
+illustrates partial-suitability effects.
 
 | land cover | suitability |
 |------------|-------------|
 | grassland  | 1.0         |
-| shrubs     | 0.6         |
-| crops      | 0.4         |
-| barren     | 0.2         |
+| crops      | 0.5         |
+| shrubs     | 0.4         |
 | wetland    | 0.2         |
-| forest     | 0.1         |
-| river      | 0.1         |
+| barren     | 0.15        |
+| forest     | 0.05        |
+| river      | 0.05        |
 | lake       | 0.0         |
 | developed  | 0.0         |
 
@@ -109,8 +123,10 @@ Ordered steps the app should be able to walk a user through:
    connectivity scores fall. Introduce the baseline = 100 idea.
 3. **Add species.** Bring in wetland and grassland species; show all three AOH
    maps. Each responds to different land cover.
-4. **Overlap / richness.** Overlay the three AOH maps into a richness surface
-   (sum or max of suitabilities) to show where habitat concentrates spatially.
+4. **Overlap / richness.** A **toggleable** layer that overlays the three AOH
+   maps into a richness surface (sum or max of suitabilities) to show where
+   habitat concentrates spatially. It is a view the user turns on, not a
+   permanent side panel, so it does not consume screen space by default.
    Contrast this spatial overlay with the SHI, which is the mean of the indexed
    per-species scores, not a spatial overlap.
 5. **Stack into the index.** Show SHS per species, then the group SHIs, then the
