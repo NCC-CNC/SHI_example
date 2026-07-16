@@ -31,7 +31,7 @@ jobs:
           ./actionlint -color
           rm -f actionlint actionlint.tar.gz
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: '.nvmrc'
           cache: npm
