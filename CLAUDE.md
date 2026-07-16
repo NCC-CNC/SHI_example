@@ -9,31 +9,64 @@ SHI_example
 
 ## Project purpose
 
-<!-- TBD: filled in after the project kickoff discussion. One or two paragraphs
-on what this project is, who it is for, and the immediate goal. -->
+SHI_example is an interactive web app for exploring the concepts behind the
+**Species Habitat Index (SHI)** (Map of Life:
+https://mapoflife.ai/resources/indicators/shi). It is a teaching and exploration
+tool that shows how the index is built up from land cover, to per-species Area
+of Habitat, to per-species habitat scores, to an aggregated index, and how all
+of that responds to change over time and to user edits (including restoration
+scenarios).
+
+The immediate goal is an MVP on a small synthetic grid (10x10) with three
+example species (forest, wetland, grassland), a time slider (1993..2025), a live
+SHI readout, pixel editing, and a before/after restoration comparison.
+
+See `docs/design/00_project_brief.md` for the full brief.
 
 ## Project status
 
-<!-- TBD: current state in a few lines. Open GitHub issues are the live roadmap;
-this file is direction and working rules, not a task list. -->
+Early. The project harness, design docs, and ADRs are in place; the app itself
+is not scaffolded yet. Next up is M0 (Vite + React + TypeScript scaffold) per
+`docs/design/03_milestones.md`. Open GitHub issues are the live roadmap.
 
 ## Scope
 
-<!-- TBD: what this project is and, just as importantly, what it deliberately is
-not. Do not expand scope without an explicit design note or ADR. -->
+An interactive, client-side teaching app for the SHI concepts, on synthetic
+data. It is deliberately NOT: a real biodiversity indicator, a geospatial/GIS
+application with real ESA rasters (at first), a backend service, or a source of
+authoritative species or habitat data. Do not expand scope without a design note
+in `docs/design/` or an ADR in `docs/decisions/`.
+
+The SHI math is kept faithful to the published method; the data is simplified.
+See `docs/design/01_shi_model.md` and the two ADRs dated 2026-07-16.
 
 ## Stack
 
-<!-- TBD: chosen language, frameworks, and tooling. Once set, mirror the choice
-into .github/workflows/ci.yml, .github/dependabot.yml, and CONTRIBUTING.md. Add
-an ADR in docs/decisions/ recording the choice. -->
+- TypeScript (strict), React, Vite.
+- Vitest for unit tests.
+- Custom canvas/SVG grid rendering (no geographic map library for the abstract
+  grid).
+- Pure, framework-free TypeScript for the SHI engine so it is unit-testable
+  independent of React.
+- GitHub Pages for static deployment.
+
+The SHI computation must stay out of React components, in pure modules under
+`src/engine/`. Rationale and alternatives are in
+`docs/decisions/2026-07-16_stack-typescript-react-vite.md`.
 
 ## Repo structure
 
-<!-- TBD: the directory layout once code exists. Explore the tree rather than
-trusting a static diagram; this list drifts. -->
+Planned layout once code exists (explore the tree rather than trusting this; it
+drifts):
 
-Baseline (already in place):
+- `src/engine/` pure, testable SHI logic (suitability, area, connectivity/
+  GISfrag, aggregation). No React imports.
+- `src/data/` typed content modules: land cover types, species + crosswalks,
+  synthetic land cover scenarios.
+- `src/ui/` React components: grid renderer, slider, score panels, edit tools.
+- `tests/` or co-located `*.test.ts` Vitest suites for the engine.
+
+Already in place:
 
 - `docs/design/` design notes, `docs/decisions/` ADRs, `docs/handoffs/` session
   handoffs.

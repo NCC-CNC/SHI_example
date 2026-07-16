@@ -11,3 +11,6 @@ All notable changes to this project are documented here. The format is based on
   Dependabot, contribution and security policies, docs structure (design,
   decisions, handoffs), and Claude Code working rules.
 - GNU General Public License v3.0.
+- Project design docs (brief, SHI model spec, example scenarios, milestones) and
+  ADRs for the stack and SHI model simplifications; project identity filled into
+  CLAUDE.md and README.
