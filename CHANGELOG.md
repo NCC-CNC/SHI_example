@@ -21,3 +21,8 @@ All notable changes to this project are documented here. The format is based on
   connectivity (distance-to-edge transform), Species Habitat Score with a
   connectivity on/off toggle, and overall + per-group aggregation. Hand-checked
   Vitest suite (38 tests).
+- M2 single-species visualization: land cover and Area-of-Habitat maps for the
+  American Marten, a year slider (1993-2025) and baseline selector, a live
+  score panel, and a synthetic forest-fragmentation scenario. Thematic land
+  cover palette with legend and hover labels; validated sequential suitability
+  ramp.
