@@ -26,3 +26,8 @@ All notable changes to this project are documented here. The format is based on
   score panel, and a synthetic forest-fragmentation scenario. Thematic land
   cover palette with legend and hover labels; validated sequential suitability
   ramp.
+- M3 three species and aggregation: American Bittern (wetland) and Bobolink
+  (grassland) added with a three-part landscape scenario (forest fragmentation,
+  wetland drainage, grassland conversion); per-species AOH maps and scores; the
+  overall and per-group Species Habitat Index; a toggleable combined-habitat
+  overlap; and a connectivity on/off toggle.

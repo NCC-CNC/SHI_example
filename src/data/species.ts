@@ -31,5 +31,48 @@ export const AMERICAN_MARTEN: Species = {
   }),
 };
 
-/** Species available in M2 (one; the wetland and grassland species land in M3). */
-export const SPECIES: readonly Species[] = [AMERICAN_MARTEN];
+/**
+ * American Bittern: a secretive marsh bird tied to emergent wetland vegetation.
+ * Draining or converting wetland collapses its habitat quickly.
+ */
+export const AMERICAN_BITTERN: Species = {
+  id: 'american-bittern',
+  name: 'American Bittern',
+  group: 'wetland',
+  crosswalk: crosswalk({
+    wetland: 1,
+    river: 0.6,
+    lake: 0.5,
+    shrubs: 0.3,
+    grassland: 0.2,
+    forest: 0.15,
+    crops: 0.1,
+  }),
+};
+
+/**
+ * Bobolink: a grassland songbird (a Canadian species at risk) that breeds in
+ * native grassland but also uses hayfields and pasture, so its partial use of
+ * crops makes grassland-to-crop conversion a gentle decline.
+ */
+export const BOBOLINK: Species = {
+  id: 'bobolink',
+  name: 'Bobolink',
+  group: 'grassland',
+  crosswalk: crosswalk({
+    grassland: 1,
+    crops: 0.5,
+    shrubs: 0.4,
+    wetland: 0.2,
+    barren: 0.15,
+    forest: 0.05,
+    river: 0.05,
+  }),
+};
+
+/** The three example species, grouped by the ecosystem they associate with. */
+export const SPECIES: readonly Species[] = [
+  AMERICAN_MARTEN,
+  AMERICAN_BITTERN,
+  BOBOLINK,
+];

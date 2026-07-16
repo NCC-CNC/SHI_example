@@ -26,11 +26,11 @@ See `docs/design/00_project_brief.md` for the full brief.
 ## Project status
 
 Early build. The harness, design docs, and ADRs are in place. M0 (scaffold), M1
-(the pure SHI engine in `src/engine/`), and M2 (single-species visualization:
-land cover + AOH maps, year slider, baseline selector, score panel, and the
-forest-fragmentation scenario in `src/data/`) are done. Next is M3 (three
-species, aggregation, and the overlap layer) per
-`docs/design/03_milestones.md`. Open GitHub issues are the live roadmap.
+(the pure SHI engine in `src/engine/`), M2 (single-species visualization), and
+M3 (three species, aggregation into the overall + per-group index, a toggleable
+overlap layer, and the connectivity toggle) are done. Next is M4 (pixel edit and
+restoration comparison) per `docs/design/03_milestones.md`. Open GitHub issues
+are the live roadmap.
 
 ## Scope
 

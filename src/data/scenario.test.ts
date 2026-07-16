@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { cellAt, speciesHabitatScore } from '../engine/index.ts';
+import { aggregateShi, cellAt, speciesHabitatScore } from '../engine/index.ts';
 import {
   SCENARIO_YEARS,
   buildGridForYear,
   landCoverForYear,
   parseGrid,
 } from './scenario.ts';
-import { AMERICAN_MARTEN } from './species.ts';
+import { AMERICAN_MARTEN, SPECIES } from './species.ts';
 
 describe('parseGrid', () => {
   it('maps character codes to land cover types', () => {
@@ -53,11 +53,11 @@ describe('forest-fragmentation scenario', () => {
     expect(SCENARIO_YEARS).toHaveLength(33);
   });
 
-  it('starts as a forest block and gains a crop corridor over time', () => {
+  it('starts as a forest block and is cut by a development corridor over time', () => {
     expect(cellAt(landCoverForYear(1993), 0, 0)).toBe('forest');
     expect(cellAt(landCoverForYear(1993), 3, 0)).toBe('forest');
-    // the corridor cell has turned to crops by 2003
-    expect(cellAt(landCoverForYear(2003), 3, 0)).toBe('crops');
+    // the corridor cell has been developed by 2003
+    expect(cellAt(landCoverForYear(2003), 3, 0)).toBe('developed');
   });
 
   it("drives the Marten's habitat score below baseline as forest is lost", () => {
@@ -68,5 +68,50 @@ describe('forest-fragmentation scenario', () => {
     expect(score.areaScore!).toBeLessThan(100);
     expect(score.connectivityScore!).toBeLessThan(100);
     expect(score.shs!).toBeLessThan(100);
+  });
+
+  it('lowers every species and the overall index by 2025 (baseline 2001)', () => {
+    const baseline = landCoverForYear(2001);
+    const current = landCoverForYear(2025);
+    const entries = SPECIES.map((species) => ({
+      group: species.group,
+      shs: speciesHabitatScore(species, current, baseline).shs,
+    }));
+    for (const entry of entries) {
+      expect(entry.shs).not.toBeNull();
+      expect(entry.shs!).toBeLessThan(100);
+    }
+    const aggregate = aggregateShi(entries);
+    expect(aggregate.overall).not.toBeNull();
+    expect(aggregate.overall!).toBeLessThan(100);
+    // one group per species here
+    expect(Object.keys(aggregate.byGroup).sort()).toEqual([
+      'forest',
+      'grassland',
+      'wetland',
+    ]);
+  });
+
+  it('scores the baseline year at 100 for the whole index', () => {
+    const baseline = landCoverForYear(2001);
+    const entries = SPECIES.map((species) => ({
+      group: species.group,
+      shs: speciesHabitatScore(species, baseline, baseline).shs,
+    }));
+    expect(aggregateShi(entries).overall).toBeCloseTo(100, 10);
+  });
+
+  it('connectivity toggle changes a fragmented species score', () => {
+    const baseline = landCoverForYear(2001);
+    const current = landCoverForYear(2025);
+    const withConn = speciesHabitatScore(AMERICAN_MARTEN, current, baseline, {
+      includeConnectivity: true,
+    });
+    const areaOnly = speciesHabitatScore(AMERICAN_MARTEN, current, baseline, {
+      includeConnectivity: false,
+    });
+    expect(areaOnly.connectivityScore).toBeNull();
+    expect(areaOnly.shs).toBeCloseTo(areaOnly.areaScore!, 10);
+    expect(withConn.shs).not.toBeCloseTo(areaOnly.shs!, 5);
   });
 });

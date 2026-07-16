@@ -10,18 +10,20 @@ import { App } from './App.tsx';
 describe('App', () => {
   const html = renderToStaticMarkup(<App />);
 
-  it('renders the title and the species name', () => {
+  it('renders the title and all three species', () => {
     expect(html).toContain('Species Habitat Index Explorer');
     expect(html).toContain('American Marten');
+    expect(html).toContain('American Bittern');
+    expect(html).toContain('Bobolink');
   });
 
-  it('renders both 10x10 grids (200 cells)', () => {
+  it('renders the land cover map plus one map per species (400 cells)', () => {
+    // Overlap is off by default: land cover (100) + 3 species (300).
     const rectCount = (html.match(/<rect/g) ?? []).length;
-    expect(rectCount).toBe(200);
+    expect(rectCount).toBe(400);
   });
 
-  it('shows a habitat score value', () => {
-    // Default view is 2025 vs baseline 2001; the panel shows a numeric SHS.
-    expect(html).toContain('Habitat score (SHS)');
+  it('shows the aggregated Species Habitat Index', () => {
+    expect(html).toContain('Species Habitat Index (2025)');
   });
 });
