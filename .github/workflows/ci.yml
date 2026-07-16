@@ -15,7 +15,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Validate the workflow files themselves. Pinned to a release binary and
       # checksummed: no third-party action in the path of a required check.
