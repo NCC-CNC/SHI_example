@@ -3,18 +3,26 @@ interface ControlsProps {
   readonly baseline: number;
   readonly minYear: number;
   readonly maxYear: number;
+  readonly includeConnectivity: boolean;
+  readonly showOverlap: boolean;
   readonly onYearChange: (year: number) => void;
   readonly onBaselineChange: (year: number) => void;
+  readonly onIncludeConnectivityChange: (value: boolean) => void;
+  readonly onShowOverlapChange: (value: boolean) => void;
 }
 
-/** Year slider and baseline-year selector. */
+/** Year slider, baseline selector, and the connectivity / overlap toggles. */
 export function Controls({
   year,
   baseline,
   minYear,
   maxYear,
+  includeConnectivity,
+  showOverlap,
   onYearChange,
   onBaselineChange,
+  onIncludeConnectivityChange,
+  onShowOverlapChange,
 }: ControlsProps) {
   const years: number[] = [];
   for (let y = minYear; y <= maxYear; y++) {
@@ -49,6 +57,24 @@ export function Controls({
             </option>
           ))}
         </select>
+      </label>
+
+      <label className="control control-check">
+        <input
+          type="checkbox"
+          checked={includeConnectivity}
+          onChange={(e) => onIncludeConnectivityChange(e.target.checked)}
+        />
+        <span>Include connectivity in the score</span>
+      </label>
+
+      <label className="control control-check">
+        <input
+          type="checkbox"
+          checked={showOverlap}
+          onChange={(e) => onShowOverlapChange(e.target.checked)}
+        />
+        <span>Show combined-habitat overlap</span>
       </label>
     </div>
   );
