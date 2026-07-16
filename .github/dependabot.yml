@@ -10,6 +10,12 @@ updates:
     groups:
       dev-dependencies:
         dependency-type: development
+    # Hold the TypeScript major: the toolchain (notably typescript-eslint) does
+    # not yet support TS 7, so the major bump fails CI (PR #11, 2026-07-16).
+    # Re-allow by removing this once the ecosystem supports TypeScript 7.
+    ignore:
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: github-actions
     directory: '/'
