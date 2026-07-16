@@ -1,8 +1,16 @@
 version: 2
 updates:
-  # Keep GitHub Actions pinned versions current. This is stack-agnostic and
-  # safe to run from day one. Add a package-ecosystem block (npm, pip, cargo,
-  # etc.) once the project's language and dependency manager are chosen.
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+    groups:
+      dev-dependencies:
+        dependency-type: development
+
   - package-ecosystem: github-actions
     directory: '/'
     schedule:

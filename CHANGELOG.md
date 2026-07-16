@@ -14,3 +14,6 @@ All notable changes to this project are documented here. The format is based on
 - Project design docs (brief, SHI model spec, example scenarios, milestones) and
   ADRs for the stack and SHI model simplifications; project identity filled into
   CLAUDE.md and README.
+- M0 scaffold: Vite + React + TypeScript app, Vitest with coverage gate on the
+  engine, ESLint + Prettier, CI running format/lint/typecheck/test/build, and a
+  GitHub Pages deploy workflow. First engine module (constants) with tests.
