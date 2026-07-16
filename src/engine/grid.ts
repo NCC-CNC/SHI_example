@@ -44,3 +44,26 @@ export function cellAt(grid: Grid, x: number, y: number): LandCoverType {
 export function sameDimensions(a: Grid, b: Grid): boolean {
   return a.width === b.width && a.height === b.height;
 }
+
+/**
+ * Return a new grid with a set of user edits applied on top. Edits are a map
+ * from flat cell index (`y * width + x`) to a replacement land cover type, so
+ * they overlay whatever grid is passed in without mutating it. An empty edit
+ * set returns the original grid unchanged.
+ */
+export function applyCellEdits(
+  grid: Grid,
+  edits: ReadonlyMap<number, LandCoverType>,
+): Grid {
+  if (edits.size === 0) {
+    return grid;
+  }
+  const cells = [...grid.cells];
+  for (const [index, type] of edits) {
+    if (index < 0 || index >= cells.length) {
+      throw new Error(`applyCellEdits: index ${index} out of bounds`);
+    }
+    cells[index] = type;
+  }
+  return { width: grid.width, height: grid.height, cells };
+}
