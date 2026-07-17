@@ -28,6 +28,7 @@ import {
   SHARE_DEFAULTS,
 } from './share-state.ts';
 import { TourPanel } from './TourPanel.tsx';
+import { AboutModal } from './AboutModal.tsx';
 import { TOUR } from './tour.ts';
 import type { TourRegion } from './tour.ts';
 
@@ -96,6 +97,7 @@ export function App() {
   const [edits, setEdits] = useState<ReadonlyMap<number, LandCoverType>>(INITIAL.edits);
   const [focusSpecies, setFocusSpecies] = useState<string | null>(null);
   const [tourStep, setTourStep] = useState<number | null>(null);
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   const regionRefs = useRef<Partial<Record<TourRegion, HTMLElement | null>>>({});
   const setRegionRef = (region: TourRegion) => (el: HTMLElement | null) => {
@@ -234,9 +236,22 @@ export function App() {
         <div className="title-row">
           <h1>Species Habitat Index Explorer</h1>
           {tourStep === null && (
-            <button type="button" className="tour-start" onClick={() => setTourStep(0)}>
-              Start guided tour
-            </button>
+            <div className="header-actions">
+              <button
+                type="button"
+                className="about-start"
+                onClick={() => setAboutOpen(true)}
+              >
+                About
+              </button>
+              <button
+                type="button"
+                className="tour-start"
+                onClick={() => setTourStep(0)}
+              >
+                Start guided tour
+              </button>
+            </div>
           )}
         </div>
         <p className="tagline">
@@ -358,6 +373,30 @@ export function App() {
         </div>
       </div>
 
+      <footer className="app-footer">
+        <p>
+          A teaching tool for the{' '}
+          <a
+            href="https://mapoflife.ai/resources/indicators/shi"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Species Habitat Index
+          </a>{' '}
+          from Map of Life. Synthetic data, not a real biodiversity indicator.
+        </p>
+        <p>
+          <a
+            href="https://github.com/NCC-CNC/SHI_example"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Source on GitHub
+          </a>{' '}
+          · Licensed under GPL-3.0
+        </p>
+      </footer>
+
       {tourStep !== null && (
         <TourPanel
           step={tourStep}
@@ -366,6 +405,8 @@ export function App() {
           onClose={closeTour}
         />
       )}
+
+      {aboutOpen && <AboutModal onClose={() => setAboutOpen(false)} />}
     </main>
   );
 }
