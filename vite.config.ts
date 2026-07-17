@@ -10,6 +10,11 @@ export default defineConfig(({ command }) => ({
   test: {
     globals: true,
     environment: 'jsdom',
+    setupFiles: ['./src/test-setup.ts'],
+    // The tour and share interaction tests render the full ~30x30 app (4500 SVG
+    // cells) and click through many re-renders, which is legitimately slow in
+    // CI. Raise the per-test ceiling above the 5s default so they are not flaky.
+    testTimeout: 20000,
     coverage: {
       provider: 'v8',
       // The pure SHI engine is where correctness lives; hold it to a bar.
