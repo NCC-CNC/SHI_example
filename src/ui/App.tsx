@@ -51,8 +51,8 @@ function scoreSpecies(
 /**
  * M5: the full explorer plus a guided concept walkthrough. Land cover map, one
  * Area-of-Habitat map per species with its score, an optional combined-habitat
- * overlap, the aggregated Species Habitat Index, live pixel editing, and a
- * before/after restoration panel. The guided tour drives this same app: each
+ * overlap, the aggregated Species Habitat Index, live land cover editing, and a
+ * before/after change-impact panel. The guided tour drives this same app: each
  * step sets the year, focus, overlap, and demo edits so a new user watches the
  * real engine build the index up and respond to change.
  */
@@ -60,7 +60,7 @@ export function App() {
   const [year, setYear] = useState(YEAR_MAX);
   const [baseline, setBaseline] = useState(DEFAULT_BASELINE);
   const [includeConnectivity, setIncludeConnectivity] = useState(true);
-  const [showOverlap, setShowOverlap] = useState(false);
+  const [showOverlap, setShowOverlap] = useState(true);
   const [brush, setBrush] = useState<LandCoverType | null>(null);
   const [edits, setEdits] = useState<ReadonlyMap<number, LandCoverType>>(new Map());
   const [focusSpecies, setFocusSpecies] = useState<string | null>(null);
@@ -184,106 +184,120 @@ export function App() {
         </div>
         <p className="tagline">
           Three species, each tied to a different habitat. Drag the year to watch the
-          landscape change, paint the land cover map to test a restoration, and see how
-          each species&apos; habitat score, and the overall index, respond.
+          landscape change, change any cell&apos;s land cover to test a scenario, and
+          see how each species&apos; habitat score, and the overall index, respond.
         </p>
       </header>
 
-      <Controls
-        year={year}
-        baseline={baseline}
-        minYear={YEAR_MIN}
-        maxYear={YEAR_MAX}
-        includeConnectivity={includeConnectivity}
-        showOverlap={showOverlap}
-        onYearChange={setYear}
-        onBaselineChange={setBaseline}
-        onIncludeConnectivityChange={setIncludeConnectivity}
-        onShowOverlapChange={setShowOverlap}
-      />
-
-      <div ref={setRegionRef('index')} className={regionClass('index', 'tour-region')}>
-        <ShiSummary aggregate={aggregate} year={year} baseline={baseline} />
-      </div>
-
-      <div ref={setRegionRef('edit')} className={regionClass('edit', 'tour-region')}>
-        <EditPanel
-          brush={brush}
-          editCount={edits.size}
-          onBrushChange={setBrush}
-          onReset={() => setEdits(new Map())}
-        />
-      </div>
-
-      <div ref={setRegionRef('maps')} className={regionClass('maps', 'maps')}>
-        <figure className="map">
-          <figcaption>
-            Land cover ({year}){hasEdits ? ' · edited' : ''}
-          </figcaption>
-          <GridView
-            grid={editedGrid}
-            colorOf={(i) => LAND_COVER_INFO[editedGrid.cells[i]!].color}
-            labelOf={(i) =>
-              `${LAND_COVER_INFO[editedGrid.cells[i]!].label}${
-                edits.has(i) ? ' (edited)' : ''
-              }`
-            }
-            onCellClick={brush === null ? undefined : paintCell}
-          />
-          <LandCoverLegend />
-        </figure>
-
-        {showOverlap && (
-          <figure className="map">
-            <figcaption>Combined habitat ({year})</figcaption>
-            <GridView
-              grid={editedGrid}
-              colorOf={(i) => suitabilityColor(overlap[i]!)}
-              labelOf={(i) => `combined suitability (mean): ${overlap[i]!.toFixed(2)}`}
-            />
-            <p className="overlap-note">
-              Mean habitat suitability across all species: where habitat concentrates
-              spatially. This is a map overlay, not the index (which is the mean of the
-              indexed scores below).
-            </p>
-          </figure>
-        )}
-      </div>
-
-      <div
-        ref={setRegionRef('species')}
-        className={regionClass('species', 'species-section')}
-      >
-        <div className="species-heading">
-          <h2>Habitat by species</h2>
-          <SuitabilityLegend />
-        </div>
-        <div className="species-grid">
-          {displayedSpecies.map(({ species, suitability, score }) => (
-            <SpeciesCard
-              key={species.id}
-              species={species}
-              grid={editedGrid}
-              suitability={suitability}
-              score={score}
-            />
-          ))}
-        </div>
-      </div>
-
-      {hasEdits && (
-        <div
-          ref={setRegionRef('restoration')}
-          className={regionClass('restoration', 'tour-region')}
-        >
-          <RestorationSummary
-            overall={overallRow}
-            species={speciesRows}
+      <div className="layout">
+        <aside className="sidebar">
+          <Controls
             year={year}
-            editCount={edits.size}
+            baseline={baseline}
+            minYear={YEAR_MIN}
+            maxYear={YEAR_MAX}
+            includeConnectivity={includeConnectivity}
+            showOverlap={showOverlap}
+            onYearChange={setYear}
+            onBaselineChange={setBaseline}
+            onIncludeConnectivityChange={setIncludeConnectivity}
+            onShowOverlapChange={setShowOverlap}
           />
+
+          <div
+            ref={setRegionRef('edit')}
+            className={regionClass('edit', 'tour-region')}
+          >
+            <EditPanel
+              brush={brush}
+              editCount={edits.size}
+              onBrushChange={setBrush}
+              onReset={() => setEdits(new Map())}
+            />
+          </div>
+        </aside>
+
+        <div className="results">
+          <div
+            ref={setRegionRef('index')}
+            className={regionClass('index', 'tour-region')}
+          >
+            <ShiSummary aggregate={aggregate} year={year} baseline={baseline} />
+          </div>
+
+          {hasEdits && (
+            <div
+              ref={setRegionRef('restoration')}
+              className={regionClass('restoration', 'tour-region')}
+            >
+              <RestorationSummary
+                overall={overallRow}
+                species={speciesRows}
+                year={year}
+                editCount={edits.size}
+              />
+            </div>
+          )}
+
+          <div ref={setRegionRef('maps')} className={regionClass('maps', 'maps')}>
+            <figure className="map">
+              <figcaption>
+                Land cover ({year}){hasEdits ? ' · edited' : ''}
+              </figcaption>
+              <GridView
+                grid={editedGrid}
+                colorOf={(i) => LAND_COVER_INFO[editedGrid.cells[i]!].color}
+                labelOf={(i) =>
+                  `${LAND_COVER_INFO[editedGrid.cells[i]!].label}${
+                    edits.has(i) ? ' (edited)' : ''
+                  }`
+                }
+                onCellClick={brush === null ? undefined : paintCell}
+              />
+              <LandCoverLegend />
+            </figure>
+
+            {showOverlap && (
+              <figure className="map">
+                <figcaption>Combined habitat ({year})</figcaption>
+                <GridView
+                  grid={editedGrid}
+                  colorOf={(i) => suitabilityColor(overlap[i]!)}
+                  labelOf={(i) =>
+                    `combined suitability (mean): ${overlap[i]!.toFixed(2)}`
+                  }
+                />
+                <p className="overlap-note">
+                  Mean habitat suitability across all species: where habitat
+                  concentrates spatially. This is a map overlay, not the index (which is
+                  the mean of the indexed scores below).
+                </p>
+              </figure>
+            )}
+          </div>
+
+          <div
+            ref={setRegionRef('species')}
+            className={regionClass('species', 'species-section')}
+          >
+            <div className="species-heading">
+              <h2>Habitat by species</h2>
+              <SuitabilityLegend />
+            </div>
+            <div className="species-grid">
+              {displayedSpecies.map(({ species, suitability, score }) => (
+                <SpeciesCard
+                  key={species.id}
+                  species={species}
+                  grid={editedGrid}
+                  suitability={suitability}
+                  score={score}
+                />
+              ))}
+            </div>
+          </div>
         </div>
-      )}
+      </div>
 
       {tourStep !== null && (
         <TourPanel

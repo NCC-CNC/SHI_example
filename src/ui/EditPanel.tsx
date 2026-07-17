@@ -3,7 +3,7 @@ import type { LandCoverType } from '../engine/index.ts';
 import { LAND_COVER_INFO } from '../data/land-cover.ts';
 
 interface EditPanelProps {
-  /** The land cover type being painted, or null when the edit tool is off. */
+  /** The land cover type being applied, or null when the edit tool is off. */
   readonly brush: LandCoverType | null;
   /** How many cells currently differ from the scenario. */
   readonly editCount: number;
@@ -12,9 +12,9 @@ interface EditPanelProps {
 }
 
 /**
- * The pixel-edit tool. Pick a land cover "brush" then click cells on the land
- * cover map to repaint them; the whole app recomputes live. Painting a cell
- * back to its scenario type clears that edit. Reset reverts every edit.
+ * The land cover edit tool. Pick a target type, then click cells on the land
+ * cover map to change them; the whole app recomputes live. Setting a cell back
+ * to its scenario type clears that edit. Reset reverts every edit.
  */
 export function EditPanel({
   brush,
@@ -25,8 +25,8 @@ export function EditPanel({
   return (
     <div className="edit-panel">
       <div className="edit-row">
-        <span className="control-label">Paint land cover</span>
-        <div className="brush-palette" role="group" aria-label="Land cover brush">
+        <span className="control-label">Set land cover</span>
+        <div className="brush-palette" role="group" aria-label="Land cover type">
           {LAND_COVER_TYPES.map((type) => {
             const selected = brush === type;
             return (
@@ -51,8 +51,8 @@ export function EditPanel({
       <div className="edit-actions">
         <span className="edit-status">
           {brush === null
-            ? 'Pick a type, then click cells on the land cover map to restore or change habitat.'
-            : `Painting ${LAND_COVER_INFO[brush].label}. Click cells on the land cover map. Edits overlay the shown year.`}
+            ? 'Pick a type, then click cells on the land cover map to change their habitat.'
+            : `Setting ${LAND_COVER_INFO[brush].label}. Click cells on the land cover map. Edits overlay the shown year.`}
         </span>
         <button
           type="button"
