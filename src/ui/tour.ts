@@ -114,8 +114,8 @@ export const TOUR: readonly TourStep[] = [
   },
   {
     title: '6. Edit a pixel',
-    body: 'Switch one forest cell (top-left corner) to barren. The Marten loses that cell of habitat, its score ticks down, and the overall index follows immediately. Every score recomputes live from the edited landscape.',
-    region: 'index',
+    body: 'Use the Set land cover tool to switch one forest cell (top-left corner) to barren. The Marten loses that cell of habitat, its score ticks down, and the overall index follows immediately. Every score recomputes live from the edited landscape.',
+    region: 'edit',
     state: {
       year: 2025,
       focusSpecies: null,
