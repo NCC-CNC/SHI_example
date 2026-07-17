@@ -694,6 +694,13 @@ body {
   line-height: 1.1;
 }
 
+.shi-impact {
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin: 0.15rem 0;
+}
+
 .shi-note {
   font-size: 0.78rem;
   color: var(--muted);

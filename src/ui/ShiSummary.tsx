@@ -6,13 +6,37 @@ interface ShiSummaryProps {
   readonly aggregate: AggregateResult;
   readonly year: number;
   readonly baseline: number;
+  /**
+   * The overall index before the current edits, or null when there are none.
+   * When set, an always-visible delta is shown so the impact of an edit stays
+   * on screen even when the full Change impact panel is scrolled below the map.
+   */
+  readonly beforeOverall?: number | null;
+}
+
+/** Signed, one-decimal edit impact with a direction class (green up, red down). */
+function ImpactDelta({ before, after }: { before: number; after: number }) {
+  const rounded = Math.round((after - before) * 10) / 10;
+  const cls = rounded > 0 ? 'delta-up' : rounded < 0 ? 'delta-down' : 'delta-flat';
+  const sign = rounded > 0 ? '+' : '';
+  return (
+    <span className={`shi-impact ${cls}`}>
+      {sign}
+      {rounded.toFixed(1)} vs. before your edits
+    </span>
+  );
 }
 
 /**
  * The Species Habitat Index: the overall value (simple mean of species scores)
  * plus the per-group means, so the aggregate reads as the sum of its parts.
  */
-export function ShiSummary({ aggregate, year, baseline }: ShiSummaryProps) {
+export function ShiSummary({
+  aggregate,
+  year,
+  baseline,
+  beforeOverall = null,
+}: ShiSummaryProps) {
   const groups = Object.keys(aggregate.byGroup).sort();
 
   return (
@@ -27,6 +51,9 @@ export function ShiSummary({ aggregate, year, baseline }: ShiSummaryProps) {
           </InfoTip>
         </span>
         <span className="shi-overall-value">{formatScore(aggregate.overall)}</span>
+        {beforeOverall !== null && aggregate.overall !== null && (
+          <ImpactDelta before={beforeOverall} after={aggregate.overall} />
+        )}
         <span className="shi-note">
           simple mean of species scores · baseline {baseline} = 100
         </span>
