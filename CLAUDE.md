@@ -25,13 +25,14 @@ See `docs/design/00_project_brief.md` for the full brief.
 
 ## Project status
 
-Early build. The harness, design docs, and ADRs are in place. M0 (scaffold), M1
-(the pure SHI engine in `src/engine/`), M2 (single-species visualization), M3
-(three species, aggregation into the overall + per-group index, a toggleable
-overlap layer, and the connectivity toggle), and M4 (pixel edit tool plus the
-before/after restoration comparison) are done. Next is M5 (guided concept
-walkthrough) per `docs/design/03_milestones.md`. Open GitHub issues are the live
-roadmap.
+Early build. The harness, design docs, and ADRs are in place. The MVP milestones
+M0 through M5 are done: M0 (scaffold), M1 (the pure SHI engine in `src/engine/`),
+M2 (single-species visualization), M3 (three species, aggregation into the
+overall + per-group index, a toggleable overlap layer, and the connectivity
+toggle), M4 (pixel edit tool plus the before/after restoration comparison), and
+M5 (the seven-step guided concept walkthrough). Next is the post-MVP backlog per
+`docs/design/03_milestones.md` (scale, real ESA data, elevation, Steward's SHI,
+forward edit propagation, save/share). Open GitHub issues are the live roadmap.
 
 ## Scope
 

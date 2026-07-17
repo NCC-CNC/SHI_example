@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DEFAULT_BASELINE,
   YEAR_MAX,
@@ -21,6 +21,9 @@ import { SpeciesCard } from './SpeciesCard.tsx';
 import { RestorationSummary } from './RestorationSummary.tsx';
 import type { CompareRow } from './RestorationSummary.tsx';
 import { suitabilityColor } from './suitability-color.ts';
+import { TourPanel } from './TourPanel.tsx';
+import { TOUR } from './tour.ts';
+import type { TourRegion } from './tour.ts';
 
 interface SpeciesScored {
   readonly species: Species;
@@ -46,11 +49,12 @@ function scoreSpecies(
 }
 
 /**
- * M4: three species over time, now editable. Land cover map, one Area-of-Habitat
- * map per species with its score, an optional combined-habitat overlap, and the
- * aggregated Species Habitat Index. Painting cells on the land cover map edits
- * the landscape and recomputes everything live; a restoration panel shows the
- * index before and after the edits. Everything comes from the pure engine.
+ * M5: the full explorer plus a guided concept walkthrough. Land cover map, one
+ * Area-of-Habitat map per species with its score, an optional combined-habitat
+ * overlap, the aggregated Species Habitat Index, live pixel editing, and a
+ * before/after restoration panel. The guided tour drives this same app: each
+ * step sets the year, focus, overlap, and demo edits so a new user watches the
+ * real engine build the index up and respond to change.
  */
 export function App() {
   const [year, setYear] = useState(YEAR_MAX);
@@ -59,6 +63,37 @@ export function App() {
   const [showOverlap, setShowOverlap] = useState(false);
   const [brush, setBrush] = useState<LandCoverType | null>(null);
   const [edits, setEdits] = useState<ReadonlyMap<number, LandCoverType>>(new Map());
+  const [focusSpecies, setFocusSpecies] = useState<string | null>(null);
+  const [tourStep, setTourStep] = useState<number | null>(null);
+
+  const regionRefs = useRef<Partial<Record<TourRegion, HTMLElement | null>>>({});
+  const setRegionRef = (region: TourRegion) => (el: HTMLElement | null) => {
+    regionRefs.current[region] = el;
+  };
+  const activeRegion = tourStep === null ? null : TOUR[tourStep]!.region;
+
+  // Entering or advancing a tour step applies that step's prescribed state and
+  // scrolls its region into view. Closing the tour clears the demo focus/edits.
+  useEffect(() => {
+    if (tourStep === null) {
+      setFocusSpecies(null);
+      setEdits(new Map());
+      return;
+    }
+    const { state, region } = TOUR[tourStep]!;
+    setYear(state.year);
+    setShowOverlap(state.showOverlap);
+    setIncludeConnectivity(state.includeConnectivity);
+    setFocusSpecies(state.focusSpecies);
+    setEdits(state.edits);
+    // Defer the scroll a frame so newly shown regions (e.g. restoration) exist.
+    requestAnimationFrame(() => {
+      regionRefs.current[region]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    });
+  }, [tourStep]);
 
   const scenarioGrid = useMemo(() => landCoverForYear(year), [year]);
   const baselineGrid = useMemo(() => landCoverForYear(baseline), [baseline]);
@@ -81,6 +116,12 @@ export function App() {
       hasEdits ? scoreSpecies(scenarioGrid, baselineGrid, includeConnectivity) : null,
     [hasEdits, scenarioGrid, baselineGrid, includeConnectivity],
   );
+
+  // During the tour's single-species steps, show just that species' card; the
+  // index and overlap still use all three species.
+  const displayedSpecies = focusSpecies
+    ? perSpecies.filter((p) => p.species.id === focusSpecies)
+    : perSpecies;
 
   // Combined-habitat overlap: mean suitability across species per cell.
   const overlap = useMemo(() => {
@@ -122,10 +163,25 @@ export function App() {
     after: score.shs,
   }));
 
+  const regionClass = (region: TourRegion, base: string) =>
+    activeRegion === region ? `${base} tour-highlight` : base;
+
+  const closeTour = () => setTourStep(null);
+  const backStep = () => setTourStep((s) => (s === null ? s : Math.max(0, s - 1)));
+  const nextStep = () =>
+    setTourStep((s) => (s === null || s >= TOUR.length - 1 ? null : s + 1));
+
   return (
-    <main className="app">
+    <main className={tourStep === null ? 'app' : 'app tour-active'}>
       <header>
-        <h1>Species Habitat Index Explorer</h1>
+        <div className="title-row">
+          <h1>Species Habitat Index Explorer</h1>
+          {tourStep === null && (
+            <button type="button" className="tour-start" onClick={() => setTourStep(0)}>
+              Start guided tour
+            </button>
+          )}
+        </div>
         <p className="tagline">
           Three species, each tied to a different habitat. Drag the year to watch the
           landscape change, paint the land cover map to test a restoration, and see how
@@ -146,16 +202,20 @@ export function App() {
         onShowOverlapChange={setShowOverlap}
       />
 
-      <ShiSummary aggregate={aggregate} year={year} baseline={baseline} />
+      <div ref={setRegionRef('index')} className={regionClass('index', 'tour-region')}>
+        <ShiSummary aggregate={aggregate} year={year} baseline={baseline} />
+      </div>
 
-      <EditPanel
-        brush={brush}
-        editCount={edits.size}
-        onBrushChange={setBrush}
-        onReset={() => setEdits(new Map())}
-      />
+      <div ref={setRegionRef('edit')} className={regionClass('edit', 'tour-region')}>
+        <EditPanel
+          brush={brush}
+          editCount={edits.size}
+          onBrushChange={setBrush}
+          onReset={() => setEdits(new Map())}
+        />
+      </div>
 
-      <div className="maps">
+      <div ref={setRegionRef('maps')} className={regionClass('maps', 'maps')}>
         <figure className="map">
           <figcaption>
             Land cover ({year}){hasEdits ? ' · edited' : ''}
@@ -190,13 +250,16 @@ export function App() {
         )}
       </div>
 
-      <div className="species-section">
+      <div
+        ref={setRegionRef('species')}
+        className={regionClass('species', 'species-section')}
+      >
         <div className="species-heading">
           <h2>Habitat by species</h2>
           <SuitabilityLegend />
         </div>
         <div className="species-grid">
-          {perSpecies.map(({ species, suitability, score }) => (
+          {displayedSpecies.map(({ species, suitability, score }) => (
             <SpeciesCard
               key={species.id}
               species={species}
@@ -209,11 +272,25 @@ export function App() {
       </div>
 
       {hasEdits && (
-        <RestorationSummary
-          overall={overallRow}
-          species={speciesRows}
-          year={year}
-          editCount={edits.size}
+        <div
+          ref={setRegionRef('restoration')}
+          className={regionClass('restoration', 'tour-region')}
+        >
+          <RestorationSummary
+            overall={overallRow}
+            species={speciesRows}
+            year={year}
+            editCount={edits.size}
+          />
+        </div>
+      )}
+
+      {tourStep !== null && (
+        <TourPanel
+          step={tourStep}
+          onBack={backStep}
+          onNext={nextStep}
+          onClose={closeTour}
         />
       )}
     </main>

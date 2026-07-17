@@ -133,21 +133,40 @@ Ordered steps the app should be able to walk a user through:
    overall SHI as their mean. This is the "how the values stack" step.
 6. **Edit a pixel.** Switch a forest cell to barren; watch the forest species'
    AOH, its SHS, and the overall SHI drop immediately.
-7. **Restoration.** In 2025, convert a block of grassland to forest; show SHI
-   before vs after. Discuss which species benefit (forest up) and which lose
-   (grassland down), and the net effect on the overall index.
+7. **Restoration.** In 2025, restore forest by reconnecting the fragmented
+   block, and show SHI before vs after. The overall index rises, the forest
+   species gains most (area and connectivity), and the step closes by inviting
+   free editing to see the trade-offs.
+
+Implementation note (M5): the tour restores the **developed corridor** (column
+3) that split the forest over time back to forest, rather than "grassland to
+forest" as first sketched. In the authored 10x10 grid the forest is
+fragmented by that developed corridor, and the grassland sits on the far right
+separated from the forest by shrubs, so it is not adjacent to the forest. The
+corridor is therefore the natural way to bridge the two fragments, it is
+unambiguously positive (no species loses), and it directly demonstrates the
+connectivity payoff and the "where you restore matters" point below. The
+grassland-to-forest trade-off (forest up, grassland down) is left for the user
+to try in free editing.
 
 ## Restoration example (concrete)
 
-Starting from 2025, restore forest by converting a contiguous block of grassland
-cells adjacent to the existing forest to forest.
+Starting from 2025, restore forest by converting the contiguous developed
+corridor (column 3) that split the forest block back to forest, reconnecting the
+two fragments.
 
-Expected qualitative outcome:
+Expected qualitative outcome (matches the app):
 - Forest species: area up, connectivity up (reconnecting fragmented forest), SHS
   rises.
-- Grassland species: area down, SHS falls.
-- Wetland species: little change.
-- Overall SHI: net change depends on the block size and placement; placing the
-  restored block to bridge two forest fragments should raise the forest
-  connectivity score more than an isolated block, which is itself a teaching
-  point (where you restore matters, not just how much).
+- Wetland and grassland species: small gains or little change, never a loss. The
+  corridor was developed (zero suitability for all three species), and forest
+  has low but nonzero suitability for the wetland and grassland species, so those
+  cells can only add habitat, not remove it.
+- Overall SHI: rises. Placing the restored cells to bridge two forest fragments
+  raises the forest connectivity score more than an isolated block would, which
+  is itself a teaching point (where you restore matters, not just how much).
+
+An alternative restoration to explore by hand is converting a block of grassland
+to forest: the forest species gains but the grassland species loses, so the net
+effect on the overall index can be slightly negative. That illustrates that
+restoration is a trade-off between species, not a free gain.
