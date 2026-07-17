@@ -96,6 +96,10 @@ Use Git from day one.
 - PR flow: work one feature or slice per branch and PR. Reference the issue in
   the PR body with `Closes #N` so the merge auto-closes it. Verify before
   opening the PR (the checks the change warrants).
+- Auto-merge is the default: open the PR, then enable auto-merge
+  (`gh pr merge <n> --squash --auto --delete-branch`) so it lands on its own once
+  CI passes. Repo-level auto-merge is enabled. No need to wait for a human
+  approval step unless the owner asks.
 
 ## Issue workflow
 
