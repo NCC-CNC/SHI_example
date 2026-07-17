@@ -1,4 +1,6 @@
 import type { LandCoverType } from '../engine/index.ts';
+import { buildBaseLandscape, forestCorridorCells } from '../data/landscape.ts';
+import { landCoverForYear } from '../data/scenario.ts';
 
 /**
  * The guided concept walkthrough (M5). Each step both explains one idea and
@@ -30,19 +32,22 @@ export interface TourStep {
 
 const NO_EDITS: ReadonlyMap<number, LandCoverType> = new Map();
 
-// Demo edits use flat cell indices (y * 10 + x) against the 2025 grid.
-// Step 6: one intact forest cell in the top-left corner -> barren.
-const PIXEL_EDIT: ReadonlyMap<number, LandCoverType> = new Map([[0, 'barren']]);
-// Step 7: the developed corridor (column 3, rows 0-5) that split the forest,
-// restored to forest so the two fragments reconnect.
-const RESTORE_CORRIDOR: ReadonlyMap<number, LandCoverType> = new Map([
-  [3, 'forest'],
-  [13, 'forest'],
-  [23, 'forest'],
-  [33, 'forest'],
-  [43, 'forest'],
-  [53, 'forest'],
-]);
+// Demo edits are derived from the generated landscape so they stay correct as
+// the landscape changes. Both are flat cell indices against the 2025 grid.
+const BASE = buildBaseLandscape();
+
+// Step 6: the first intact forest cell (top-left) still present in 2025 -> barren.
+const PIXEL_EDIT: ReadonlyMap<number, LandCoverType> = (() => {
+  const grid = landCoverForYear(2025);
+  const idx = grid.cells.findIndex((cover) => cover === 'forest');
+  return new Map<number, LandCoverType>(idx >= 0 ? [[idx, 'barren']] : []);
+})();
+
+// Step 7: the developed corridor that split the forest, restored to forest so
+// the two fragments reconnect.
+const RESTORE_CORRIDOR: ReadonlyMap<number, LandCoverType> = new Map(
+  forestCorridorCells(BASE).map((idx) => [idx, 'forest'] as const),
+);
 
 const MARTEN = 'american-marten';
 

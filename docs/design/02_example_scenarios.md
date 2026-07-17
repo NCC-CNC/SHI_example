@@ -84,17 +84,24 @@ illustrates partial-suitability effects.
 | lake       | 0.0         |
 | developed  | 0.0         |
 
-## The synthetic land cover story (10x10, 1993 to 2025)
+## The synthetic land cover story (~30x30, 1993 to 2025)
 
-A single hand-authored narrative that exercises all three species in different
-directions, so the aggregate SHI tells a richer story than any one species.
+A single narrative that exercises all three species in different directions, so
+the aggregate SHI tells a richer story than any one species. The base landscape
+and the dated disturbances are generated procedurally from a fixed seed (no
+runtime randomness) in `src/data/landscape.ts`, then applied by `scenario.ts`.
+This replaced the original hand-authored 10x10 rows so the maps read more like
+terrain (issue #38); the teaching story is unchanged.
 
-Rough starting layout (1993):
-- A block of **forest** in one corner.
-- A **wetland** patch fed by a **river** running across the grid, with a small
-  **lake**.
-- An expanse of **grassland** with some **shrubs**.
-- A few **crops** and one small **developed** cell.
+Starting layout (1993), an organic landscape rather than blocks:
+- A **forest** upland anchored in the top-left, softening through a shrub
+  ecotone into **grassland** across the right.
+- A **wetland** band in the low, wet bottom-left, with a small **lake** and a
+  **river** meandering down to it.
+- A patch of existing **crops** in the dry bottom-right.
+
+The generator lays these down with value noise so the region boundaries are
+irregular. The disturbances below then act on the regions as they advance.
 
 Narrative beats over time (illustrative, tune while building):
 - **1993 to ~2005: forest fragmentation.** The forest block is progressively
@@ -138,11 +145,12 @@ Ordered steps the app should be able to walk a user through:
    species gains most (area and connectivity), and the step closes by inviting
    free editing to see the trade-offs.
 
-Implementation note (M5): the tour restores the **developed corridor** (column
-3) that split the forest over time back to forest, rather than "grassland to
-forest" as first sketched. In the authored 10x10 grid the forest is
-fragmented by that developed corridor, and the grassland sits on the far right
-separated from the forest by shrubs, so it is not adjacent to the forest. The
+Implementation note (M5): the tour restores the **developed corridor** that
+split the forest over time back to forest, rather than "grassland to forest" as
+first sketched. The forest upland is fragmented by a developed corridor that
+wanders down through it (computed by `forestCorridorCells`), and the grassland
+sits on the far right separated from the forest by shrubs, so it is not adjacent
+to the forest. The
 corridor is therefore the natural way to bridge the two fragments, it is
 unambiguously positive (no species loses), and it directly demonstrates the
 connectivity payoff and the "where you restore matters" point below. The
@@ -151,8 +159,8 @@ to try in free editing.
 
 ## Restoration example (concrete)
 
-Starting from 2025, restore forest by converting the contiguous developed
-corridor (column 3) that split the forest block back to forest, reconnecting the
+Starting from 2025, restore forest by converting the developed corridor that
+wandered down through and split the forest block back to forest, reconnecting the
 two fragments.
 
 Expected qualitative outcome (matches the app):

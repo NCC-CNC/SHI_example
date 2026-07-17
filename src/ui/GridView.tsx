@@ -12,22 +12,23 @@ interface GridViewProps {
 }
 
 /**
- * Renders a land cover / suitability grid as SVG cells. A 2px surface gap
- * between cells keeps adjacent fills legible. Each cell carries a <title> so
- * hovering names it, so identity never depends on color alone. When
- * `onCellClick` is provided the grid is an editable surface: cells respond to
- * click and to keyboard (Enter/Space) for accessibility.
+ * Renders a land cover / suitability grid as SVG cells. A hairline surface gap
+ * between cells keeps the grid faintly visible while the fills read as a
+ * continuous landscape. Each cell carries a <title> so hovering names it, so
+ * identity never depends on color alone. When `onCellClick` is provided the grid
+ * is an editable surface: cells respond to click and to keyboard (Enter/Space).
  */
 export function GridView({
   grid,
   colorOf,
   labelOf,
-  cellSize = 30,
+  cellSize = 16,
   onCellClick,
 }: GridViewProps) {
   const width = grid.width * cellSize;
   const height = grid.height * cellSize;
-  const gap = 2;
+  // A hairline gap that scales with the cell so it stays faint at any density.
+  const gap = cellSize <= 10 ? 0.5 : 1;
   const editable = onCellClick !== undefined;
 
   return (
@@ -48,7 +49,6 @@ export function GridView({
             y={y + gap / 2}
             width={cellSize - gap}
             height={cellSize - gap}
-            rx={2}
             fill={colorOf(index)}
             className={editable ? 'grid-cell-editable' : undefined}
             tabIndex={editable ? 0 : undefined}
