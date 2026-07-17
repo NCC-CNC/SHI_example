@@ -17,10 +17,11 @@ describe('App', () => {
     expect(html).toContain('Bobolink');
   });
 
-  it('renders the land cover, overlap, and one map per species (500 cells)', () => {
-    // Overlap is on by default: land cover (100) + overlap (100) + 3 species (300).
+  it('renders the land cover, overlap, and one map per species (5 x 900 cells)', () => {
+    // Overlap is on by default. 30x30 = 900 cells x 5 maps (land cover + overlap
+    // + 3 species).
     const rectCount = (html.match(/<rect/g) ?? []).length;
-    expect(rectCount).toBe(500);
+    expect(rectCount).toBe(4500);
   });
 
   it('shows the aggregated Species Habitat Index', () => {

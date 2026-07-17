@@ -6,6 +6,12 @@ import {
   landCoverForYear,
   parseGrid,
 } from './scenario.ts';
+import {
+  GRID_HEIGHT,
+  GRID_WIDTH,
+  buildBaseLandscape,
+  forestCorridorCells,
+} from './landscape.ts';
 import { AMERICAN_MARTEN, SPECIES } from './species.ts';
 
 describe('parseGrid', () => {
@@ -53,11 +59,25 @@ describe('forest-fragmentation scenario', () => {
     expect(SCENARIO_YEARS).toHaveLength(33);
   });
 
-  it('starts as a forest block and is cut by a development corridor over time', () => {
-    expect(cellAt(landCoverForYear(1993), 0, 0)).toBe('forest');
-    expect(cellAt(landCoverForYear(1993), 3, 0)).toBe('forest');
-    // the corridor cell has been developed by 2003
-    expect(cellAt(landCoverForYear(2003), 3, 0)).toBe('developed');
+  it('generates a ~30x30 grid with a forest upland in the top-left', () => {
+    const grid = landCoverForYear(1993);
+    expect(grid.width).toBe(GRID_WIDTH);
+    expect(grid.height).toBe(GRID_HEIGHT);
+    expect(cellAt(grid, 0, 0)).toBe('forest');
+    const forestCells = grid.cells.filter((c) => c === 'forest').length;
+    expect(forestCells).toBeGreaterThan(50);
+  });
+
+  it('cuts the forest with a development corridor over time', () => {
+    const corridor = forestCorridorCells(buildBaseLandscape());
+    expect(corridor.length).toBeGreaterThan(5);
+    const base = landCoverForYear(1993);
+    const later = landCoverForYear(2025);
+    for (const idx of corridor) {
+      // Every corridor cell starts as forest and is developed by 2025.
+      expect(base.cells[idx]).toBe('forest');
+      expect(later.cells[idx]).toBe('developed');
+    }
   });
 
   it("drives the Marten's habitat score below baseline as forest is lost", () => {

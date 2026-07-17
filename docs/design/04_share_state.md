@@ -58,6 +58,7 @@ independent of React.
 
 ## Not covered
 
-- No compression. The grid is 10x10, so even a fully edited scenario stays a
-  reasonable link length. Revisit if the grid scales (issue #17).
+- No compression. The grid is ~30x30 (900 cells), so even a heavily edited
+  scenario stays a reasonable link length. Revisit if the grid scales much
+  further.
 - No history/undo of scenarios. One live scenario in the URL at a time.

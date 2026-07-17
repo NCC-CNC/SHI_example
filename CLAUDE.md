@@ -17,9 +17,10 @@ of Habitat, to per-species habitat scores, to an aggregated index, and how all
 of that responds to change over time and to user edits (including restoration
 scenarios).
 
-The immediate goal is an MVP on a small synthetic grid (10x10) with three
-example species (forest, wetland, grassland), a time slider (1993..2025), a live
-SHI readout, pixel editing, and a before/after restoration comparison.
+The immediate goal is an MVP on a small synthetic grid (now a generated ~30x30
+landscape) with three example species (forest, wetland, grassland), a time
+slider (1993..2025), a live SHI readout, pixel editing, and a before/after
+change-impact comparison.
 
 See `docs/design/00_project_brief.md` for the full brief.
 

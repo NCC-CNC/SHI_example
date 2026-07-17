@@ -1,6 +1,7 @@
 import { YEAR_MAX, YEAR_MIN, gridFromRows } from '../engine/index.ts';
 import type { Grid, LandCoverType } from '../engine/index.ts';
 import { LAND_COVER_BY_CHAR } from './land-cover.ts';
+import { buildBaseLandscape, buildLandscapeEvents } from './landscape.ts';
 
 /** A single cell change applied from a given year onward. */
 export interface CellChange {
@@ -62,80 +63,22 @@ export function buildGridForYear(
   return { width: base.width, height: base.height, cells };
 }
 
-// --- The synthetic landscape scenario (10x10, 1993..2025) ----------------
+// --- The synthetic landscape scenario (~30x30, 1993..2025) ----------------
 //
-// A three-part story so each species declines for a different reason (see
+// The base landscape and the dated disturbances are generated procedurally (a
+// fixed seed, no runtime randomness) in landscape.ts. The teaching story is
+// unchanged, each species declines for a different reason (see
 // docs/design/02_example_scenarios.md):
-//   1. Forest fragmentation (top-left block split by a crop corridor) hits the
-//      American Marten: area falls gradually, connectivity sharply.
-//   2. Wetland drainage (bottom-left marsh converted to grass/crops) hits the
+//   1. Forest fragmentation (a developed corridor splits the forest upland) hits
+//      the American Marten: area falls gradually, connectivity sharply.
+//   2. Wetland drainage (the bottom-left marsh dries to barren) hits the
 //      American Bittern.
-//   3. Grassland conversion (right side to crops/shrubs) hits the Bobolink, but
-//      gently, since it still uses crops.
+//   3. Grassland conversion (right side to crops) hits the Bobolink, but gently,
+//      since it still half-uses crops.
 
-const BASE_1993 = parseGrid([
-  'FFFFFFFSGG',
-  'FFFFFFFSGG',
-  'FFFFFFFSGG',
-  'FFFFFFFSGG',
-  'FFFFFFFSGG',
-  'FFFFFFFSGG',
-  'SSSSSSSSGG',
-  'WWWSSGGGGG',
-  'LWWSSGGGCC',
-  'LLWSSGGRCC',
-]);
+const BASE_1993 = buildBaseLandscape();
 
-const c = (x: number, y: number, to: LandCoverType): CellChange => ({ x, y, to });
-
-// Forest and wetland losses convert to developed/barren (roads, clearing, dried
-// mud), which is unsuitable for all three species, so those losses do not
-// incidentally feed the grassland generalist. Grassland converts to crops,
-// which the Bobolink still half-uses, so its decline is real but gentle.
-const EVENTS: readonly ScenarioEvent[] = [
-  // Forest: edge softening to shrubs at the margin (before the baseline year).
-  { year: 1998, changes: [c(6, 0, 'shrubs'), c(6, 1, 'shrubs'), c(6, 2, 'shrubs')] },
-  // Forest: a corridor of development begins cutting down through the block.
-  { year: 2003, changes: [c(3, 0, 'developed'), c(3, 1, 'developed')] },
-  { year: 2006, changes: [c(3, 2, 'developed'), c(3, 3, 'developed')] },
-  // Wetland: the marsh starts drying at its edge.
-  { year: 2007, changes: [c(0, 7, 'barren')] },
-  // Forest: the corridor reaches the bottom; the block is split in two.
-  { year: 2009, changes: [c(3, 4, 'developed'), c(3, 5, 'developed')] },
-  // Wetland: drainage continues.
-  { year: 2010, changes: [c(1, 7, 'barren'), c(2, 9, 'barren')] },
-  // Forest widens/deepens the split; wetland dries further.
-  {
-    year: 2013,
-    changes: [
-      c(2, 3, 'developed'),
-      c(4, 2, 'developed'),
-      c(5, 5, 'developed'),
-      c(2, 7, 'barren'),
-      c(1, 8, 'barren'),
-    ],
-  },
-  // Wetland nearly gone; grassland conversion to cropland begins on the right.
-  { year: 2016, changes: [c(2, 8, 'barren'), c(8, 6, 'crops'), c(9, 6, 'crops')] },
-  // Forest: further nibbling at the fragments.
-  {
-    year: 2017,
-    changes: [c(0, 5, 'developed'), c(1, 5, 'developed'), c(6, 5, 'developed')],
-  },
-  // Grassland to cropland.
-  { year: 2019, changes: [c(5, 7, 'crops'), c(6, 7, 'crops')] },
-  { year: 2021, changes: [c(2, 0, 'developed'), c(4, 0, 'developed')] },
-  { year: 2022, changes: [c(7, 7, 'crops'), c(8, 7, 'crops')] },
-  {
-    year: 2024,
-    changes: [
-      c(5, 0, 'developed'),
-      c(0, 4, 'developed'),
-      c(5, 8, 'crops'),
-      c(8, 0, 'crops'),
-    ],
-  },
-];
+const EVENTS: readonly ScenarioEvent[] = buildLandscapeEvents(BASE_1993);
 
 /** Every year in the scenario, inclusive. */
 export const SCENARIO_YEARS: readonly number[] = Array.from(
