@@ -1,3 +1,5 @@
+import { InfoTip } from './InfoTip.tsx';
+
 interface ControlsProps {
   readonly year: number;
   readonly baseline: number;
@@ -46,7 +48,14 @@ export function Controls({
       </label>
 
       <label className="control">
-        <span className="control-label">Baseline (= 100)</span>
+        <span className="control-label">
+          Baseline (= 100)
+          <InfoTip term="the baseline year">
+            The reference year every score is measured against. Each species reads 100
+            in the baseline year, so later years read as a percentage of baseline
+            habitat.
+          </InfoTip>
+        </span>
         <select
           value={baseline}
           onChange={(e) => onBaselineChange(Number(e.target.value))}
@@ -59,23 +68,36 @@ export function Controls({
         </select>
       </label>
 
-      <label className="control control-check">
-        <input
-          type="checkbox"
-          checked={includeConnectivity}
-          onChange={(e) => onIncludeConnectivityChange(e.target.checked)}
-        />
-        <span>Include connectivity in the score</span>
-      </label>
+      <div className="control control-check">
+        <label className="control-check-label">
+          <input
+            type="checkbox"
+            checked={includeConnectivity}
+            onChange={(e) => onIncludeConnectivityChange(e.target.checked)}
+          />
+          <span>Include connectivity in the score</span>
+        </label>
+        <InfoTip term="connectivity">
+          When on, the score also penalizes fragmentation: the same amount of habitat
+          scores lower when broken into scattered patches than when it is connected.
+        </InfoTip>
+      </div>
 
-      <label className="control control-check">
-        <input
-          type="checkbox"
-          checked={showOverlap}
-          onChange={(e) => onShowOverlapChange(e.target.checked)}
-        />
-        <span>Show combined-habitat overlap</span>
-      </label>
+      <div className="control control-check">
+        <label className="control-check-label">
+          <input
+            type="checkbox"
+            checked={showOverlap}
+            onChange={(e) => onShowOverlapChange(e.target.checked)}
+          />
+          <span>Show combined-habitat overlap</span>
+        </label>
+        <InfoTip term="the combined-habitat overlap">
+          A map layer showing mean habitat suitability across all species, so you can
+          see where habitat concentrates spatially. It is a visual overlay, not part of
+          the index.
+        </InfoTip>
+      </div>
     </div>
   );
 }

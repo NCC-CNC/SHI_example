@@ -29,6 +29,7 @@ import {
 } from './share-state.ts';
 import { TourPanel } from './TourPanel.tsx';
 import { AboutModal } from './AboutModal.tsx';
+import { InfoTip } from './InfoTip.tsx';
 import { TOUR } from './tour.ts';
 import type { TourRegion } from './tour.ts';
 
@@ -355,7 +356,14 @@ export function App() {
             className={regionClass('species', 'species-section')}
           >
             <div className="species-heading">
-              <h2>Habitat by species</h2>
+              <h2>
+                Habitat by species
+                <InfoTip term="Area of Habitat">
+                  Each map recolors the land cover by how suitable every cell is for
+                  that one species. The suitable cells make up its Area of Habitat;
+                  darker means better habitat.
+                </InfoTip>
+              </h2>
               <SuitabilityLegend />
             </div>
             <div className="species-grid">

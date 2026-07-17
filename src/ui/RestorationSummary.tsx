@@ -1,4 +1,5 @@
 import { formatScore } from './format.ts';
+import { InfoTip } from './InfoTip.tsx';
 
 /** One before/after comparison line (overall index or a single species). */
 export interface CompareRow {
@@ -68,7 +69,13 @@ export function RestorationSummary({
   return (
     <section className="restoration">
       <div className="restoration-heading">
-        <h2>Change impact ({year})</h2>
+        <h2>
+          Change impact ({year})
+          <InfoTip term="change impact">
+            Compares the index before and after your edits, both scored against the same
+            baseline. Positive deltas are gains, negative are losses.
+          </InfoTip>
+        </h2>
         <span className="restoration-note">
           {editCount} cell{editCount === 1 ? '' : 's'} edited · before &rarr; after,
           same baseline
