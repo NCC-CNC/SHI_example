@@ -60,42 +60,40 @@ export function AboutModal({ onClose }: AboutModalProps) {
             >
               Species Habitat Index (SHI)
             </a>{' '}
-            from Map of Life. It shows how the index is built up: from land
-            cover, to each species&apos; Area of Habitat, to a per-species
-            habitat score, to an aggregated index, and how all of that responds
-            to change over time and to your edits.
+            from Map of Life. It shows how the index is built up: from land cover, to
+            each species&apos; Area of Habitat, to a per-species habitat score, to an
+            aggregated index, and how all of that responds to change over time and to
+            your edits.
           </p>
 
           <h3>How to read it</h3>
           <ul>
             <li>
-              <strong>Land cover map:</strong> the synthetic landscape for the
-              selected year. Drag the year slider to watch it change from 1993
-              to 2025.
+              <strong>Land cover map:</strong> the synthetic landscape for the selected
+              year. Drag the year slider to watch it change from 1993 to 2025.
             </li>
             <li>
-              <strong>Habitat by species:</strong> the land cover recolored by
-              how suitable each cell is for that species. Darker means better
-              habitat.
+              <strong>Habitat by species:</strong> the land cover recolored by how
+              suitable each cell is for that species. Darker means better habitat.
             </li>
             <li>
-              <strong>Species Habitat Index:</strong> each score is indexed to
-              100 at the baseline year, so it reads as a percentage of baseline
-              habitat. The overall index is the mean of the per-species scores.
+              <strong>Species Habitat Index:</strong> each score is indexed to 100 at
+              the baseline year, so it reads as a percentage of baseline habitat. The
+              overall index is the mean of the per-species scores.
             </li>
             <li>
-              <strong>Set land cover:</strong> pick a cover type and click cells
-              to test a scenario. The change-impact panel then compares the
-              index before and after your edits.
+              <strong>Set land cover:</strong> pick a cover type and click cells to test
+              a scenario. The change-impact panel then compares the index before and
+              after your edits.
             </li>
           </ul>
 
           <h3>Important</h3>
           <p className="modal-caveat">
-            The data is synthetic and the landscape is a small abstract grid.
-            The SHI math mirrors the published method, but this is a teaching
-            and exploration tool, not a real biodiversity indicator or a source
-            of authoritative species or habitat data.
+            The data is synthetic and the landscape is a small abstract grid. The SHI
+            math mirrors the published method, but this is a teaching and exploration
+            tool, not a real biodiversity indicator or a source of authoritative species
+            or habitat data.
           </p>
 
           <p className="modal-links">
