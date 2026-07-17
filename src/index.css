@@ -239,6 +239,34 @@ body {
   cursor: default;
 }
 
+/* Share link */
+.share {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.share-btn {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.share-btn:hover {
+  border-color: var(--muted);
+}
+
+.share-note {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
 /* Maps */
 .maps {
   display: flex;

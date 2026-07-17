@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  DEFAULT_BASELINE,
   YEAR_MAX,
   YEAR_MIN,
   aggregateShi,
@@ -21,6 +20,13 @@ import { SpeciesCard } from './SpeciesCard.tsx';
 import { RestorationSummary } from './RestorationSummary.tsx';
 import type { CompareRow } from './RestorationSummary.tsx';
 import { suitabilityColor } from './suitability-color.ts';
+import { ShareLink } from './ShareLink.tsx';
+import {
+  decodeState,
+  encodeState,
+  sanitizeEdits,
+  SHARE_DEFAULTS,
+} from './share-state.ts';
 import { TourPanel } from './TourPanel.tsx';
 import { TOUR } from './tour.ts';
 import type { TourRegion } from './tour.ts';
@@ -48,6 +54,29 @@ function scoreSpecies(
   return { perSpecies, aggregate };
 }
 
+/** Cell count of the synthetic grid, used to drop out-of-range shared edits. */
+const CELL_COUNT = landCoverForYear(YEAR_MAX).cells.length;
+
+/** Read the URL hash (without '#'), guarded for non-browser (SSR/test) render. */
+function readHash(): string {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+  return window.location.hash.replace(/^#/, '');
+}
+
+// Scenario state decoded from the URL once at load, merged over the defaults.
+// Shared edits are clamped to the current grid so a stale link cannot crash the
+// engine (applyCellEdits throws on an out-of-range index).
+const INITIAL = (() => {
+  const parsed = decodeState(readHash());
+  return {
+    ...SHARE_DEFAULTS,
+    ...parsed,
+    edits: sanitizeEdits(parsed.edits ?? SHARE_DEFAULTS.edits, CELL_COUNT),
+  };
+})();
+
 /**
  * M5: the full explorer plus a guided concept walkthrough. Land cover map, one
  * Area-of-Habitat map per species with its score, an optional combined-habitat
@@ -57,12 +86,14 @@ function scoreSpecies(
  * real engine build the index up and respond to change.
  */
 export function App() {
-  const [year, setYear] = useState(YEAR_MAX);
-  const [baseline, setBaseline] = useState(DEFAULT_BASELINE);
-  const [includeConnectivity, setIncludeConnectivity] = useState(true);
-  const [showOverlap, setShowOverlap] = useState(true);
+  const [year, setYear] = useState(INITIAL.year);
+  const [baseline, setBaseline] = useState(INITIAL.baseline);
+  const [includeConnectivity, setIncludeConnectivity] = useState(
+    INITIAL.includeConnectivity,
+  );
+  const [showOverlap, setShowOverlap] = useState(INITIAL.showOverlap);
   const [brush, setBrush] = useState<LandCoverType | null>(null);
-  const [edits, setEdits] = useState<ReadonlyMap<number, LandCoverType>>(new Map());
+  const [edits, setEdits] = useState<ReadonlyMap<number, LandCoverType>>(INITIAL.edits);
   const [focusSpecies, setFocusSpecies] = useState<string | null>(null);
   const [tourStep, setTourStep] = useState<number | null>(null);
 
@@ -74,10 +105,17 @@ export function App() {
 
   // Entering or advancing a tour step applies that step's prescribed state and
   // scrolls its region into view. Closing the tour clears the demo focus/edits.
+  // A ref tracks the previous step so the clear only fires on an actual close
+  // (step -> null), not on the initial mount, which would wipe URL-seeded edits.
+  const prevTourStep = useRef<number | null>(tourStep);
   useEffect(() => {
+    const closing = tourStep === null && prevTourStep.current !== null;
+    prevTourStep.current = tourStep;
     if (tourStep === null) {
-      setFocusSpecies(null);
-      setEdits(new Map());
+      if (closing) {
+        setFocusSpecies(null);
+        setEdits(new Map());
+      }
       return;
     }
     const { state, region } = TOUR[tourStep]!;
@@ -94,6 +132,25 @@ export function App() {
       });
     });
   }, [tourStep]);
+
+  // Keep the URL in sync with the scenario so it is shareable and survives a
+  // reload. Suspended during the tour, whose steps drive transient demo state we
+  // do not want to persist. replaceState avoids new history entries and scroll.
+  useEffect(() => {
+    if (tourStep !== null || typeof window === 'undefined') {
+      return;
+    }
+    const query = encodeState({
+      year,
+      baseline,
+      includeConnectivity,
+      showOverlap,
+      edits,
+    });
+    const { pathname, search } = window.location;
+    const url = query ? `${pathname}${search}#${query}` : `${pathname}${search}`;
+    window.history.replaceState(null, '', url);
+  }, [year, baseline, includeConnectivity, showOverlap, edits, tourStep]);
 
   const scenarioGrid = useMemo(() => landCoverForYear(year), [year]);
   const baselineGrid = useMemo(() => landCoverForYear(baseline), [baseline]);
@@ -215,6 +272,8 @@ export function App() {
               onReset={() => setEdits(new Map())}
             />
           </div>
+
+          <ShareLink />
         </aside>
 
         <div className="results">
