@@ -53,10 +53,11 @@ function CompareLine({ row }: { row: CompareRow }) {
 }
 
 /**
- * Restoration before/after: the Species Habitat Index and each species scored
- * on the scenario landscape ("before") versus the same landscape with the
- * user's edits applied ("after"), both indexed to the same baseline. Only shown
- * once there is at least one edit.
+ * Change impact (before/after): the Species Habitat Index and each species
+ * scored on the scenario landscape ("before") versus the same landscape with the
+ * user's edits applied ("after"), both indexed to the same baseline. Covers any
+ * edit, gain or loss (restoration is one case). Only shown once there is at least
+ * one edit.
  */
 export function RestorationSummary({
   overall,
@@ -67,7 +68,7 @@ export function RestorationSummary({
   return (
     <section className="restoration">
       <div className="restoration-heading">
-        <h2>Restoration comparison ({year})</h2>
+        <h2>Change impact ({year})</h2>
         <span className="restoration-note">
           {editCount} cell{editCount === 1 ? '' : 's'} edited · before &rarr; after,
           same baseline
