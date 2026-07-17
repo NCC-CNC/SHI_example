@@ -89,6 +89,12 @@ body {
   margin: 0 0 0.25rem;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .tour-start {
   padding: 0.45rem 0.9rem;
   font-size: 0.9rem;
@@ -102,6 +108,121 @@ body {
 
 .tour-start:hover {
   background: #155e2b;
+}
+
+.about-start {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.about-start:hover {
+  border-color: var(--muted);
+}
+
+/* About modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+  width: 100%;
+  max-width: 40rem;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-head h2 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.modal-close {
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0.1rem 0.5rem;
+  color: var(--muted);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  border-color: var(--border);
+  color: var(--ink);
+}
+
+.modal-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.modal-body h3 {
+  font-size: 1rem;
+  margin: 1.25rem 0 0.4rem;
+}
+
+.modal-body p {
+  margin: 0 0 0.75rem;
+}
+
+.modal-body ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.modal-body li {
+  margin-bottom: 0.35rem;
+}
+
+.modal-caveat {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  background: var(--panel);
+  border-left: 3px solid #1b7837;
+  border-radius: 4px;
+}
+
+.modal-links {
+  margin-top: 1rem;
+}
+
+/* Footer */
+.app-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.app-footer p {
+  margin: 0 0 0.35rem;
 }
 
 .tagline {
