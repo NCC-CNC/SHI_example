@@ -297,22 +297,13 @@ export function App() {
             ref={setRegionRef('index')}
             className={regionClass('index', 'tour-region')}
           >
-            <ShiSummary aggregate={aggregate} year={year} baseline={baseline} />
+            <ShiSummary
+              aggregate={aggregate}
+              year={year}
+              baseline={baseline}
+              beforeOverall={before?.aggregate.overall ?? null}
+            />
           </div>
-
-          {hasEdits && (
-            <div
-              ref={setRegionRef('restoration')}
-              className={regionClass('restoration', 'tour-region')}
-            >
-              <RestorationSummary
-                overall={overallRow}
-                species={speciesRows}
-                year={year}
-                editCount={edits.size}
-              />
-            </div>
-          )}
 
           <div ref={setRegionRef('maps')} className={regionClass('maps', 'maps')}>
             <figure className="map">
@@ -350,6 +341,20 @@ export function App() {
               </figure>
             )}
           </div>
+
+          {hasEdits && (
+            <div
+              ref={setRegionRef('restoration')}
+              className={regionClass('restoration', 'tour-region')}
+            >
+              <RestorationSummary
+                overall={overallRow}
+                species={speciesRows}
+                year={year}
+                editCount={edits.size}
+              />
+            </div>
+          )}
 
           <div
             ref={setRegionRef('species')}
