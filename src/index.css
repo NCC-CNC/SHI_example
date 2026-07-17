@@ -479,8 +479,14 @@ body {
   stroke-width: 2;
 }
 
-.grid-cell-editable:focus-visible {
-  outline: none;
+/* Roving-tabindex focus: the grid is one tab stop, so the container shows the
+   focus ring and the active cell shows the keyboard cursor while focused. */
+.grid-view-editable:focus-visible {
+  outline: 2px solid #1b7837;
+  outline-offset: 2px;
+}
+
+.grid-view-editable:focus .grid-cell-active {
   stroke: #1b7837;
   stroke-width: 2.5;
 }
