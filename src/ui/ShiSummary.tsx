@@ -1,5 +1,6 @@
 import type { AggregateResult } from '../engine/index.ts';
 import { formatScore } from './format.ts';
+import { InfoTip } from './InfoTip.tsx';
 
 interface ShiSummaryProps {
   readonly aggregate: AggregateResult;
@@ -17,7 +18,14 @@ export function ShiSummary({ aggregate, year, baseline }: ShiSummaryProps) {
   return (
     <section className="shi-summary">
       <div className="shi-overall">
-        <span className="shi-overall-label">Species Habitat Index ({year})</span>
+        <span className="shi-overall-label">
+          Species Habitat Index ({year})
+          <InfoTip term="the Species Habitat Index">
+            The overall index is the simple mean of the per-species scores, each indexed
+            to 100 at the baseline year. The per-group values below break it down by
+            habitat.
+          </InfoTip>
+        </span>
         <span className="shi-overall-value">{formatScore(aggregate.overall)}</span>
         <span className="shi-note">
           simple mean of species scores · baseline {baseline} = 100

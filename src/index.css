@@ -125,6 +125,59 @@ body {
   border-color: var(--muted);
 }
 
+/* Inline help affordance */
+.infotip {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: 0.35rem;
+}
+
+.infotip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.05rem;
+  height: 1.05rem;
+  padding: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: help;
+}
+
+.infotip-btn:hover,
+.infotip-btn[aria-expanded='true'] {
+  color: #fff;
+  background: #1b7837;
+  border-color: #1b7837;
+}
+
+.infotip-bubble {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  width: max-content;
+  max-width: 16rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: normal;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+
 /* About modal */
 .modal-backdrop {
   position: fixed;
@@ -530,6 +583,12 @@ body {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
+}
+
+.control-check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .control-check input {
